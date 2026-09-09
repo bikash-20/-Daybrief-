@@ -1,0 +1,80 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Daybrief">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#7CC4FF"/>
+      <stop offset="55%" stop-color="#4F8DF3"/>
+      <stop offset="100%" stop-color="#274FC2"/>
+    </linearGradient>
+    <linearGradient id="sun" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#FFE9A8"/>
+      <stop offset="100%" stop-color="#FFB057"/>
+    </linearGradient>
+    <linearGradient id="card" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.96"/>
+      <stop offset="100%" stop-color="#E9EFFA" stop-opacity="0.92"/>
+    </linearGradient>
+    <linearGradient id="line" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#3B7BE0"/>
+      <stop offset="100%" stop-color="#7AA9F5"/>
+    </linearGradient>
+    <filter id="soft" x="-10%" y="-10%" width="120%" height="120%">
+      <feGaussianBlur stdDeviation="4"/>
+    </filter>
+  </defs>
+
+  <!-- Rounded background tile -->
+  <rect width="512" height="512" rx="112" ry="112" fill="url(#bg)"/>
+
+  <!-- Subtle inner highlight -->
+  <rect x="0" y="0" width="512" height="200" rx="112" ry="112" fill="#FFFFFF" opacity="0.06"/>
+
+  <!-- Rising sun (behind card) -->
+  <g transform="translate(0,-6)">
+    <circle cx="362" cy="196" r="72" fill="url(#sun)"/>
+    <!-- Soft halo -->
+    <circle cx="362" cy="196" r="100" fill="#FFD27A" opacity="0.18" filter="url(#soft)"/>
+  </g>
+
+  <!-- Brief / document card -->
+  <g transform="translate(96,150)">
+    <!-- Drop shadow -->
+    <rect x="6" y="14" width="320" height="240" rx="36" ry="36" fill="#0B1430" opacity="0.18" filter="url(#soft)"/>
+    <!-- Card body -->
+    <rect x="0" y="0" width="320" height="240" rx="36" ry="36" fill="url(#card)"/>
+
+    <!-- Date chip (top-left) -->
+    <rect x="28" y="28" width="72" height="44" rx="12" ry="12" fill="url(#line)" opacity="0.16"/>
+    <rect x="28" y="28" width="72" height="6" rx="3" ry="3" fill="url(#line)" opacity="0.55"/>
+    <rect x="36" y="42" width="40" height="6" rx="3" ry="3" fill="#274FC2" opacity="0.75"/>
+    <rect x="36" y="54" width="28" height="14" rx="3" ry="3" fill="#274FC2" opacity="0.55"/>
+
+    <!-- Greeting lines -->
+    <rect x="116" y="32" width="170" height="14" rx="7" ry="7" fill="#274FC2" opacity="0.85"/>
+    <rect x="116" y="54" width="120" height="10" rx="5" ry="5" fill="#274FC2" opacity="0.35"/>
+
+    <!-- Divider -->
+    <rect x="28" y="92" width="264" height="2" rx="1" ry="1" fill="#274FC2" opacity="0.10"/>
+
+    <!-- Content rows -->
+    <g>
+      <circle cx="44" cy="124" r="10" fill="#4F8DF3" opacity="0.85"/>
+      <rect x="64" y="118" width="170" height="10" rx="5" ry="5" fill="#274FC2" opacity="0.55"/>
+      <rect x="64" y="132" width="120" height="8"  rx="4" ry="4" fill="#274FC2" opacity="0.25"/>
+
+      <circle cx="44" cy="160" r="10" fill="#FFB057" opacity="0.95"/>
+      <rect x="64" y="154" width="200" height="10" rx="5" ry="5" fill="#274FC2" opacity="0.55"/>
+      <rect x="64" y="168" width="150" height="8"  rx="4" ry="4" fill="#274FC2" opacity="0.25"/>
+
+      <circle cx="44" cy="196" r="10" fill="#7AA9F5" opacity="0.95"/>
+      <rect x="64" y="190" width="160" height="10" rx="5" ry="5" fill="#274FC2" opacity="0.55"/>
+      <rect x="64" y="204" width="110" height="8"  rx="4" ry="4" fill="#274FC2" opacity="0.25"/>
+    </g>
+
+    <!-- Footer dot strip -->
+    <g transform="translate(28,220)">
+      <rect x="0"   y="0" width="40" height="6" rx="3" ry="3" fill="#274FC2" opacity="0.30"/>
+      <rect x="48"  y="0" width="22" height="6" rx="3" ry="3" fill="#274FC2" opacity="0.18"/>
+      <rect x="78"  y="0" width="14" height="6" rx="3" ry="3" fill="#274FC2" opacity="0.12"/>
+    </g>
+  </g>
+</svg>
