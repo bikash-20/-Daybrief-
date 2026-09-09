@@ -1,113 +1,52 @@
-import { NextRequest, NextResponse } from "next/server";
-import ICAL from "ical.js";
+// Requires: ICS_FEED_URL in .env.local — a public .ics link (Google Calendar
+// > Settings > "Secret address in iCal format", or any public calendar export).
+import { NextResponse } from "next/server";
+import ical, { type VEvent } from "node-ical";
 
-export const revalidate = 900;
+export const revalidate = 600;
 
-export type CalendarEvent = {
-  id: string;
-  title: string;
-  start: string; // ISO
-  end: string; // ISO
-  allDay: boolean;
-  location?: string;
-};
-
-export type CalendarResponse =
-  | { ok: true; source: string; events: CalendarEvent[] }
-  | { ok: false; error: string };
-
-const MAX_EVENTS = 5;
-const HORIZON_HOURS = 48;
-
-function isTimeLike(value: unknown): value is { toJSDate: () => Date } {
-  return (
-    typeof value === "object" &&
-    value !== null &&
-    typeof (value as { toJSDate?: unknown }).toJSDate === "function"
-  );
+function paramValueToString(v: unknown): string {
+  if (typeof v === "string") return v;
+  if (v && typeof v === "object" && "val" in v && typeof (v as { val: unknown }).val === "string") {
+    return (v as { val: string }).val;
+  }
+  return "";
 }
 
-function readDate(prop: ICAL.Property | null): Date | null {
-  if (!prop) return null;
-  const value = prop.getFirstValue();
-  if (!isTimeLike(value)) return null;
+export async function GET() {
+  const feedUrl = process.env.ICS_FEED_URL;
+  if (!feedUrl) {
+    return NextResponse.json({ configured: false, events: [] });
+  }
+
   try {
-    return value.toJSDate();
+    const data = await ical.async.fromURL(feedUrl);
+
+    const now = new Date();
+    const in48h = new Date(now.getTime() + 48 * 60 * 60 * 1000);
+
+    const events = Object.values(data)
+      .filter((item): item is VEvent => item?.type === "VEVENT")
+      .map((item) => {
+        const start = item.start;
+        const end = item.end;
+        if (!start || !end) return null;
+        return { title: paramValueToString(item.summary), start, end };
+      })
+      .filter((e): e is { title: string; start: Date; end: Date } => e !== null && e.start >= now && e.start <= in48h)
+      .sort((a, b) => a.start.getTime() - b.start.getTime())
+      .slice(0, 5)
+      .map((e) => ({
+        title: e.title,
+        start: e.start.toISOString(),
+        end: e.end.toISOString(),
+      }));
+
+    return NextResponse.json({ configured: true, events });
   } catch {
-    return null;
-  }
-}
-
-export async function GET(req: NextRequest) {
-  const url = req.nextUrl.searchParams.get("url");
-  if (!url) {
-    return NextResponse.json<CalendarResponse>(
-      { ok: false, error: "Missing ics url parameter." },
-      { status: 400 },
+    return NextResponse.json(
+      { configured: true, events: [], error: "Failed to parse calendar feed" },
+      { status: 502 },
     );
-  }
-
-  let parsed: URL;
-  try {
-    parsed = new URL(url);
-  } catch {
-    return NextResponse.json<CalendarResponse>(
-      { ok: false, error: "Invalid ICS URL." },
-      { status: 400 },
-    );
-  }
-  if (parsed.protocol !== "https:" && parsed.protocol !== "http:") {
-    return NextResponse.json<CalendarResponse>(
-      { ok: false, error: "ICS URL must be http(s)." },
-      { status: 400 },
-    );
-  }
-
-  try {
-    const r = await fetch(parsed.toString(), {
-      headers: { "User-Agent": "Daybrief/1.0" },
-      next: { revalidate: 900 },
-    });
-    if (!r.ok) throw new Error(`fetch ${r.status}`);
-    const text = await r.text();
-    const jcal = ICAL.parse(text);
-    const comp = new ICAL.Component(jcal);
-    const vevents = comp.getAllSubcomponents("vevent");
-
-    const now = Date.now();
-    const horizon = now + HORIZON_HOURS * 3600 * 1000;
-
-    const events: CalendarEvent[] = [];
-    for (let i = 0; i < vevents.length; i++) {
-      const vev = vevents[i];
-      const dtstart = vev.getFirstProperty("dtstart");
-      const dtend = vev.getFirstProperty("dtend");
-      const start = readDate(dtstart);
-      const end = readDate(dtend) ?? start;
-      if (!start || !end) continue;
-      if (end.getTime() < now || start.getTime() > horizon) continue;
-
-      const allDay = dtstart?.getParameter("value") === "date";
-
-      events.push({
-        id: `${i}-${start.toISOString()}`,
-        title: vev.getFirstPropertyValue("summary")?.toString() ?? "Untitled event",
-        start: start.toISOString(),
-        end: end.toISOString(),
-        allDay,
-        location: vev.getFirstPropertyValue("location")?.toString() || undefined,
-      });
-    }
-
-    events.sort((a, b) => +new Date(a.start) - +new Date(b.start));
-    const body: CalendarResponse = {
-      ok: true,
-      source: parsed.host,
-      events: events.slice(0, MAX_EVENTS),
-    };
-    return NextResponse.json(body, { headers: { "Cache-Control": "public, max-age=900" } });
-  } catch (err) {
-    const message = err instanceof Error ? err.message : "calendar fetch failed";
-    return NextResponse.json<CalendarResponse>({ ok: false, error: message }, { status: 200 });
   }
 }

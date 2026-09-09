@@ -10,8 +10,8 @@
   },
   "dependencies": {
     "@ducanh2912/next-pwa": "^10.2.9",
-    "ical.js": "^2.2.1",
     "next": "14.2.35",
+    "node-ical": "^0.27.1",
     "react": "^18",
     "react-dom": "^18",
     "rss-parser": "^3.13.0"
