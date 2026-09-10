@@ -25,8 +25,8 @@ export function ThemePicker({ applied, onApply }: Props) {
   return (
     <div className="space-y-4">
       <div>
-        <div className="text-[13px] font-semibold text-ink">Theme</div>
-        <div className="text-[12px] text-ink-soft mt-0.5">Changes the entire app instantly.</div>
+        <div className="text-[14px] font-semibold text-ink">Theme</div>
+        <div className="text-[13px] text-ink-soft mt-0.5">Changes the entire app instantly.</div>
       </div>
 
       <div className="grid grid-cols-3 sm:grid-cols-6 gap-2">
@@ -55,7 +55,7 @@ export function ThemePicker({ applied, onApply }: Props) {
                 aria-hidden
               />
               <span
-                className="absolute bottom-1 left-2 text-[11px] font-bold tracking-wide truncate"
+                className="absolute bottom-1 left-2 text-[12px] font-bold tracking-wide truncate"
                 style={{ color: t.swatch.text }}
               >
                 {t.label}
@@ -83,17 +83,17 @@ export function ThemePicker({ applied, onApply }: Props) {
         }}
       >
         <div className="flex items-center justify-between mb-3">
-          <div className="text-[11px] uppercase tracking-[0.18em] font-semibold" style={{ color: "var(--text-faint)" }}>
+          <div className="text-[12px] uppercase tracking-[0.18em] font-semibold" style={{ color: "var(--text-faint)" }}>
             Preview · {focused.label}
           </div>
-          <div className="text-[11px]" style={{ color: "var(--text-faint)" }}>
+          <div className="text-[12px]" style={{ color: "var(--text-faint)" }}>
             {focused.blurb}
           </div>
         </div>
 
         <div className="flex flex-col sm:flex-row gap-3">
           <div
-            className="h-[80px] w-[80px] rounded-full grid place-items-center text-[12px] font-bold"
+            className="h-[80px] w-[80px] rounded-full grid place-items-center text-[13px] font-bold"
             style={{
               background: "var(--sunken)",
               color: "var(--text-soft)",
@@ -110,15 +110,15 @@ export function ThemePicker({ applied, onApply }: Props) {
               boxShadow: "-6px -6px 14px var(--shadow-light), 7px 7px 16px var(--shadow-dark)",
             }}
           >
-            <div className="text-[11px] uppercase tracking-[0.16em] font-semibold" style={{ color: "var(--text-faint)" }}>
+            <div className="text-[12px] uppercase tracking-[0.16em] font-semibold" style={{ color: "var(--text-faint)" }}>
               Today
             </div>
             <div className="text-[24px] font-bold leading-tight mt-0.5">31°C</div>
-            <div className="text-[12px] mt-1" style={{ color: "var(--text-soft)" }}>
+            <div className="text-[13px] mt-1" style={{ color: "var(--text-soft)" }}>
               Mostly clear · H 33° · L 26°
             </div>
             <div
-              className="mt-3 inline-block px-3 py-1 rounded-full text-[12px] font-semibold"
+              className="mt-3 inline-block px-3 py-1 rounded-full text-[13px] font-semibold"
               style={{
                 background: "linear-gradient(135deg, var(--accent-1), var(--accent-3))",
                 color: "var(--bg)",
@@ -136,7 +136,7 @@ export function ThemePicker({ applied, onApply }: Props) {
           disabled={!dirty}
           whileTap={{ scale: 0.96 }}
           transition={{ type: "spring", stiffness: 400, damping: 28 }}
-          className="neu-pill px-4 py-2 text-[13px] font-semibold text-ink disabled:opacity-40"
+          className="neu-pill px-4 py-2 text-[14px] font-semibold text-ink disabled:opacity-40"
         >
           Apply theme
         </motion.button>
@@ -145,13 +145,13 @@ export function ThemePicker({ applied, onApply }: Props) {
           disabled={!dirty}
           whileTap={{ scale: 0.96 }}
           transition={{ type: "spring", stiffness: 400, damping: 28 }}
-          className="neu-pill px-4 py-2 text-[13px] font-semibold text-ink-soft disabled:opacity-40"
+          className="neu-pill px-4 py-2 text-[14px] font-semibold text-ink-soft disabled:opacity-40"
         >
           Reset
         </motion.button>
       </div>
 
-      <p className="text-[12px] text-ink-faint leading-relaxed">
+      <p className="text-[13px] text-ink-faint leading-relaxed">
         The page background, all surfaces, and the browser address bar color update instantly.
         The OS-level PWA title bar is set when you install the app and won&apos;t change
         between installs — reinstall once after picking your theme to lock in the right color.

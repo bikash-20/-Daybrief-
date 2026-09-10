@@ -57,10 +57,10 @@ export function NewsCarousel({ refreshKey }: Props) {
     return (
       <section aria-label="Top stories">
         <div className="flex items-baseline justify-between mb-3">
-          <h2 className="text-[11px] uppercase tracking-[0.18em] text-ink-faint font-semibold">
+          <h2 className="text-[12px] uppercase tracking-[0.18em] text-ink-faint font-semibold">
             Top stories
           </h2>
-          <span className="text-[11px] text-ink-faint italic">Offline · {state.message}</span>
+          <span className="text-[12px] text-ink-faint italic">Offline · {state.message}</span>
         </div>
         <NewsList items={state.cached.items} hideTitle />
       </section>
@@ -70,10 +70,10 @@ export function NewsCarousel({ refreshKey }: Props) {
   return (
     <motion.section
       whileTap={{ scale: 0.99 }}
-      className="neu-card-soft p-5 text-[14px] text-ink-soft"
+      className="neu-card-soft p-5 text-[15px] text-ink-soft"
     >
       <p>News unavailable.</p>
-      <p className="mt-1 text-[12px] text-ink-faint">{state.message}</p>
+      <p className="mt-1 text-[13px] text-ink-faint">{state.message}</p>
     </motion.section>
   );
 }
@@ -89,7 +89,7 @@ function NewsList({
     <section aria-label="Top stories">
       {!hideTitle && (
         <div className="flex items-baseline justify-between mb-3">
-          <h2 className="text-[11px] uppercase tracking-[0.18em] text-ink-faint font-semibold">
+          <h2 className="text-[12px] uppercase tracking-[0.18em] text-ink-faint font-semibold">
             Top stories
           </h2>
         </div>
@@ -106,16 +106,16 @@ function NewsList({
             transition={{ type: "spring", stiffness: 400, damping: 28 }}
             className="snap-start shrink-0 w-[88%] sm:w-[55%] lg:w-[40%] neu-card-soft p-4 cursor-pointer"
           >
-            <div className="text-[11px] uppercase tracking-[0.18em] text-ink-faint font-semibold">
+            <div className="text-[12px] uppercase tracking-[0.18em] text-ink-faint font-semibold">
               {item.source}
             </div>
-            <div className="mt-2 text-[15px] font-semibold leading-snug line-clamp-3 text-ink">
+            <div className="mt-2 text-[16px] font-semibold leading-snug line-clamp-3 text-ink">
               {item.title}
             </div>
             {item.snippet && (
-              <div className="mt-2 text-[13px] text-ink-soft line-clamp-2">{item.snippet}</div>
+              <div className="mt-2 text-[14px] text-ink-soft line-clamp-2">{item.snippet}</div>
             )}
-            <div className="mt-3 flex items-center justify-between text-[12px] text-ink-faint">
+            <div className="mt-3 flex items-center justify-between text-[13px] text-ink-faint">
               <span>{formatRelativeNews(item.publishedAt)} ago</span>
               <span className="font-semibold text-ink-soft">Read →</span>
             </div>

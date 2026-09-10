@@ -74,7 +74,7 @@ function BottomActions({
           whileHover={{ y: -1 }}
           transition={{ type: "spring", stiffness: 400, damping: 28 }}
           onClick={() => void onInstall()}
-          className="neu-pill px-4 py-2 text-[13px] font-semibold text-ink whitespace-nowrap"
+          className="neu-pill px-4 py-2.5 text-[14px] font-semibold text-ink whitespace-nowrap"
         >
           Install Daybrief
         </motion.button>

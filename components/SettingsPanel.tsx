@@ -139,7 +139,7 @@ export function SettingsPanel() {
                 <CalendarSection />
                 <CitySection />
 
-                <p className="text-[12px] text-ink-faint">
+                <p className="text-[13px] text-ink-faint">
                   Everything is stored locally in your browser. No accounts, no tracking.
                 </p>
               </div>

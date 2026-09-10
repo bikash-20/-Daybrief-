@@ -36,7 +36,7 @@ export function CalendarSection() {
         button={
           <button
             onClick={save}
-            className="shrink-0 neu-pill px-4 py-2.5 text-[13px] font-semibold text-ink"
+            className="shrink-0 neu-pill px-4 py-2.5 text-[14px] font-semibold text-ink"
           >
             {status === "saved" ? "Saved ✓" : "Save"}
           </button>

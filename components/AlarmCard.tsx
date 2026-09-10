@@ -37,7 +37,7 @@ export function AlarmCard() {
         <button
           onClick={enableNotifications}
           disabled={permission === "unsupported" || permission === "denied"}
-          className="text-[12px] text-ink-soft hover:text-ink underline disabled:no-underline disabled:opacity-50 font-semibold"
+          className="text-[13px] text-ink-soft hover:text-ink underline disabled:no-underline disabled:opacity-50 font-semibold"
         >
           {permission === "granted"
             ? "Notifications on"
@@ -49,12 +49,12 @@ export function AlarmCard() {
         </button>
       </div>
 
-      <p className="text-[12px] text-ink-faint mb-3">
+      <p className="text-[13px] text-ink-faint mb-3 leading-relaxed">
         Alarms only ring while this app is open in a tab — not a background phone alarm.
       </p>
 
       {alarms.length === 0 && (
-        <p className="text-[14px] text-ink-soft mb-3">No alarms set.</p>
+        <p className="text-[15px] text-ink-soft mb-3">No alarms set.</p>
       )}
 
       <ul className="space-y-1">
@@ -64,8 +64,8 @@ export function AlarmCard() {
             className="flex items-center justify-between py-2.5 border-t border-ink/[0.06] first:border-t-0"
           >
             <div className="min-w-0">
-              <p className="font-bold text-ink text-[15px] tabular-nums">{a.time}</p>
-              {a.label && <p className="text-[12px] text-ink-soft truncate">{a.label}</p>}
+              <p className="font-bold text-ink text-[16px] tabular-nums">{a.time}</p>
+              {a.label && <p className="text-[13px] text-ink-soft truncate">{a.label}</p>}
             </div>
             <div className="flex items-center gap-3 shrink-0">
               <motion.button
@@ -121,7 +121,7 @@ export function AlarmCard() {
         />
         <button
           type="submit"
-          className="neu-pill px-4 py-2 text-[14px] font-semibold text-ink"
+          className="neu-pill px-4 py-2 text-[15px] font-semibold text-ink"
         >
           Add
         </button>

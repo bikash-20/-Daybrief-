@@ -148,7 +148,7 @@ export default function AssistantPage() {
             transition={{ duration: 0.4 }}
             className="pt-6"
           >
-            <p className="text-[14px] text-ink-soft mb-4 leading-relaxed">
+            <p className="text-[15px] text-ink-soft mb-4 leading-relaxed">
               Hi, I&apos;m Bikash — your Daybrief assistant. I can read your weather,
               calendar, alarms, and headlines when they&apos;re available. Ask me anything.
             </p>

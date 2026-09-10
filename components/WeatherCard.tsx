@@ -47,12 +47,12 @@ export function WeatherCard() {
   if (location.status === "denied" || location.status === "unavailable") {
     return (
       <div className="neu-card-soft p-5">
-        <p className="text-[14px] text-ink mb-1">
+        <p className="text-[15px] text-ink mb-1">
           {location.status === "denied"
             ? "Location permission denied."
             : "Weather unavailable."}
         </p>
-        <p className="text-[13px] text-ink-soft">
+        <p className="text-[14px] text-ink-soft">
           Open <span className="font-semibold text-ink">Settings</span> (gear icon) to set your city.
         </p>
       </div>
@@ -85,7 +85,7 @@ export function WeatherCard() {
         className="neu-card-soft flex-1 p-4 flex flex-col justify-between"
       >
         <div>
-          <div className="text-[12px] uppercase tracking-[0.18em] text-ink-faint font-semibold">
+          <div className="text-[13px] uppercase tracking-[0.18em] text-ink-faint font-semibold">
             {location.label}
           </div>
           <div className="mt-1 text-[44px] font-bold leading-none text-ink">
@@ -93,10 +93,10 @@ export function WeatherCard() {
           </div>
         </div>
         <div className="flex items-end justify-between">
-          <div className="text-[14px] text-ink-soft font-medium">
+          <div className="text-[15px] text-ink-soft font-medium">
             {weather.condition}
           </div>
-          <div className="text-[12px] text-ink-faint">
+          <div className="text-[13px] text-ink-faint">
             H {weather.high}° · L {weather.low}°
           </div>
         </div>

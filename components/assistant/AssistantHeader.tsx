@@ -19,7 +19,7 @@ export function AssistantHeader() {
         </svg>
       </motion.button>
       <div className="min-w-0">
-        <div className="text-[12px] tracking-[0.22em] text-ink-faint font-semibold uppercase">
+        <div className="text-[13px] tracking-[0.22em] text-ink-faint font-semibold uppercase">
           AI assistant
         </div>
         <h1 className="mt-0.5 text-[22px] sm:text-[24px] font-bold leading-tight text-ink truncate">

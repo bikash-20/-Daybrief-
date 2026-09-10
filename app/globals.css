@@ -185,8 +185,8 @@ body {
 @layer components {
   .md-body {
     color: var(--text);
-    font-size: 15px;
-    line-height: 1.55;
+    font-size: 16px;
+    line-height: 1.6;
   }
   .md-body > * + * { margin-top: 0.55rem; }
   .md-body strong { color: var(--text); font-weight: 700; }
@@ -202,9 +202,9 @@ body {
     font-weight: 700;
     margin-top: 0.9rem;
   }
-  .md-body h1 { font-size: 18px; }
-  .md-body h2 { font-size: 16px; }
-  .md-body h3 { font-size: 15px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-soft); }
+  .md-body h1 { font-size: 20px; }
+  .md-body h2 { font-size: 18px; }
+  .md-body h3 { font-size: 16px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-soft); }
   .md-body ul, .md-body ol {
     padding-left: 1.2rem;
     color: var(--text);
@@ -226,7 +226,7 @@ body {
   .md-body table {
     width: 100%;
     border-collapse: collapse;
-    font-size: 14px;
+    font-size: 15px;
     border: 1px solid var(--divider);
     border-radius: 12px;
     overflow: hidden;
@@ -248,7 +248,7 @@ body {
     border-radius: 6px;
     padding: 1px 6px;
     font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
-    font-size: 13.5px;
+    font-size: 14.5px;
   }
   .md-body pre {
     background: var(--sunken);
@@ -256,8 +256,8 @@ body {
     border-radius: 14px;
     padding: 0.8rem 0.9rem;
     overflow-x: auto;
-    font-size: 13.5px;
-    line-height: 1.55;
+    font-size: 14.5px;
+    line-height: 1.6;
     border: 1px solid var(--divider);
   }
   .md-body pre code {

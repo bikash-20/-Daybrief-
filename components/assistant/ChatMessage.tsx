@@ -7,7 +7,7 @@ const Markdown = dynamic(
   () => import("@/components/markdown/Markdown").then((m) => m.Markdown),
   {
     ssr: false,
-    loading: () => <div className="text-ink-faint text-[14px]">…</div>,
+    loading: () => <div className="text-ink-faint text-[15px]">…</div>,
   },
 );
 
@@ -42,7 +42,7 @@ export function ChatMessage({ msg }: { msg: ChatBubble }) {
         className="flex justify-end"
       >
         <div
-          className="max-w-[85%] sm:max-w-[75%] px-4 py-2.5 rounded-card text-[14px] text-white"
+          className="max-w-[85%] sm:max-w-[75%] px-4 py-2.5 rounded-card text-[15px] text-white"
           style={{
             background: "linear-gradient(135deg, var(--accent-1) 0%, var(--accent-3) 100%)",
             boxShadow: "0 6px 16px var(--accent-shadow)",
@@ -62,7 +62,7 @@ export function ChatMessage({ msg }: { msg: ChatBubble }) {
         transition={{ duration: 0.25 }}
         className="flex justify-start"
       >
-        <div className="max-w-[85%] sm:max-w-[75%] neu-card-soft p-3 text-[14px] text-ink-soft">
+        <div className="max-w-[85%] sm:max-w-[75%] neu-card-soft p-3 text-[15px] text-ink-soft">
           {msg.content}
         </div>
       </motion.div>
@@ -77,11 +77,11 @@ export function ChatMessage({ msg }: { msg: ChatBubble }) {
       className="flex justify-start"
     >
       <div className="max-w-[88%] sm:max-w-[80%]">
-        <div className="neu-pill-sunken px-4 py-3 text-[14px] text-ink">
+        <div className="neu-pill-sunken px-4 py-3 text-[15px] text-ink">
           <Markdown content={msg.content} />
         </div>
         {msg.modelUsed && (
-          <div className="mt-1 ml-3 text-[11px] text-ink-faint uppercase tracking-[0.16em] font-semibold">
+          <div className="mt-1 ml-3 text-[12px] text-ink-faint uppercase tracking-[0.16em] font-semibold">
             {shortModelName(msg.modelUsed)} · tier {msg.tier ?? "?"}
           </div>
         )}
