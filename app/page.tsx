@@ -5,6 +5,7 @@ import { Header } from "@/components/Header";
 import { WeatherCard } from "@/components/WeatherCard";
 import { CalendarCard } from "@/components/CalendarCard";
 import { NewsCarousel } from "@/components/NewsCarousel";
+import { AlarmCard } from "@/components/AlarmCard";
 import { useInstallPrompt } from "@/lib/useInstallPrompt";
 import { usePullToRefresh } from "@/lib/usePullToRefresh";
 
@@ -29,6 +30,7 @@ export default function Home() {
       <div className="px-5 space-y-4">
         <WeatherCard />
         <CalendarCard />
+        <AlarmCard />
         <NewsCarousel refreshKey={refreshKey} />
       </div>
 
