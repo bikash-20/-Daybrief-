@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { motion } from "framer-motion";
 import { requestAlarmPermission, useAlarms } from "@/lib/useAlarms";
 
 export function AlarmCard() {
@@ -23,19 +24,20 @@ export function AlarmCard() {
   }
 
   if (!hydrated) {
-    return (
-      <section className="rounded-card bg-white/5 border border-white/10 p-5 h-[180px] animate-pulse" />
-    );
+    return <div className="neu-card-soft h-[180px] animate-pulse" />;
   }
 
   return (
-    <section className="rounded-card bg-white/5 border border-white/10 p-5">
+    <motion.section
+      whileTap={{ scale: 0.99 }}
+      className="neu-card-soft p-5"
+    >
       <div className="flex items-center justify-between mb-3">
-        <h2 className="font-semibold">Alarms</h2>
+        <h2 className="font-bold text-ink">Alarms</h2>
         <button
           onClick={enableNotifications}
           disabled={permission === "unsupported" || permission === "denied"}
-          className="text-[11px] text-white/55 hover:text-white/80 underline disabled:no-underline disabled:opacity-50"
+          className="text-[11px] text-ink-soft hover:text-ink underline disabled:no-underline disabled:opacity-50 font-semibold"
         >
           {permission === "granted"
             ? "Notifications on"
@@ -47,43 +49,48 @@ export function AlarmCard() {
         </button>
       </div>
 
-      <p className="text-[11px] text-white/55 mb-3">
+      <p className="text-[11px] text-ink-faint mb-3">
         Alarms only ring while this app is open in a tab — not a background phone alarm.
       </p>
 
       {alarms.length === 0 && (
-        <p className="text-sm text-white/60 mb-3">No alarms set.</p>
+        <p className="text-[13px] text-ink-soft mb-3">No alarms set.</p>
       )}
 
       <ul className="space-y-1">
         {alarms.map((a) => (
           <li
             key={a.id}
-            className="flex items-center justify-between py-2 border-t border-white/10 first:border-t-0"
+            className="flex items-center justify-between py-2.5 border-t border-ink/[0.06] first:border-t-0"
           >
             <div className="min-w-0">
-              <p className="font-medium">{a.time}</p>
-              {a.label && <p className="text-xs text-white/60 truncate">{a.label}</p>}
+              <p className="font-bold text-ink text-[15px] tabular-nums">{a.time}</p>
+              {a.label && <p className="text-[11px] text-ink-soft truncate">{a.label}</p>}
             </div>
             <div className="flex items-center gap-3 shrink-0">
-              <button
+              <motion.button
                 onClick={() => toggleAlarm(a.id)}
                 aria-pressed={a.enabled}
                 aria-label={a.enabled ? "Disable alarm" : "Enable alarm"}
-                className={`relative h-6 w-10 rounded-full transition ${
-                  a.enabled ? "bg-white/80" : "bg-white/15"
-                }`}
+                className="relative h-6 w-11 rounded-full neu-pill-sunken"
               >
-                <span
-                  className={`absolute top-0.5 h-5 w-5 rounded-full bg-white shadow transition-all ${
-                    a.enabled ? "left-[18px]" : "left-0.5"
-                  } ${a.enabled ? "bg-blue-500" : "bg-white/70"}`}
+                <motion.span
+                  layout
+                  transition={{ type: "spring", stiffness: 700, damping: 30 }}
+                  className={`absolute top-0.5 h-5 w-5 rounded-full shadow ${
+                    a.enabled ? "left-[22px]" : "left-0.5"
+                  }`}
+                  style={{
+                    background: a.enabled
+                      ? "linear-gradient(135deg, var(--accent-1) 0%, var(--accent-3) 100%)"
+                      : "var(--card)",
+                  }}
                 />
-              </button>
+              </motion.button>
               <button
                 onClick={() => removeAlarm(a.id)}
                 aria-label="Delete alarm"
-                className="text-white/50 hover:text-white/85 text-sm"
+                className="text-ink-faint hover:text-ink text-sm"
               >
                 ✕
               </button>
@@ -104,21 +111,21 @@ export function AlarmCard() {
           type="time"
           value={time}
           onChange={(e) => setTime(e.target.value)}
-          className="rounded-lg bg-white/10 px-2 py-1 text-sm outline-none"
+          className="neu-sunken px-3 py-2 text-[14px] text-ink focus:outline-none tabular-nums"
         />
         <input
           value={label}
           onChange={(e) => setLabel(e.target.value)}
           placeholder="Label (optional)"
-          className="flex-1 rounded-lg bg-white/10 px-2 py-1 text-sm outline-none placeholder:text-white/40"
+          className="flex-1 neu-sunken px-3 py-2 text-[14px] text-ink placeholder:text-ink-faint focus:outline-none"
         />
         <button
           type="submit"
-          className="rounded-lg bg-white/20 hover:bg-white/30 px-3 py-1 text-sm font-medium"
+          className="neu-pill px-4 py-2 text-[13px] font-semibold text-ink"
         >
           Add
         </button>
       </form>
-    </section>
+    </motion.section>
   );
 }

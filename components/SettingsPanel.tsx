@@ -1,17 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { CALENDAR_URL_KEY } from "./CalendarCard";
-
-/**
- * Gear-icon settings trigger + modal. Lets each visitor:
- *   - paste their own calendar ICS/webcal URL
- *   - set a manual city (used by useLocation when geolocation is denied)
- *   - clear either to fall back to defaults / re-prompt geolocation
- *
- * Writes are persisted to localStorage; CalendarCard listens for a
- * 'daybrief:calendar-refresh' window event so it refetches without a reload.
- */
+import { AnimatePresence, motion } from "framer-motion";
+import { CALENDAR_URL_KEY } from "./CalendarCard.shared";
 
 const CITY_KEY = "daybrief:manual-location";
 
@@ -80,10 +71,13 @@ export function SettingsPanel() {
 
   return (
     <>
-      <button
+      <motion.button
         aria-label="Settings"
         onClick={() => setOpen(true)}
-        className="h-10 w-10 grid place-items-center rounded-full bg-white/10 hover:bg-white/20 transition"
+        whileTap={{ scale: 0.92, rotate: 30 }}
+        whileHover={{ rotate: 30 }}
+        transition={{ type: "spring", stiffness: 300, damping: 18 }}
+        className="neu-pill h-11 w-11 grid place-items-center text-ink-soft"
       >
         <svg
           width="18" height="18" viewBox="0 0 24 24" fill="none"
@@ -93,36 +87,48 @@ export function SettingsPanel() {
           <circle cx="12" cy="12" r="3" />
           <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" />
         </svg>
-      </button>
+      </motion.button>
 
-      {open && (
-        <div
-          role="dialog"
-          aria-modal="true"
-          aria-label="Settings"
-          className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/60 backdrop-blur-sm"
-          onClick={(e) => {
-            if (e.target === e.currentTarget) setOpen(false);
-          }}
-        >
-          <div className="w-full sm:max-w-md sm:rounded-card rounded-t-card bg-[#10172A] border border-white/10 p-5">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-[16px] font-semibold">Settings</h2>
-              <button
-                onClick={() => setOpen(false)}
-                aria-label="Close settings"
-                className="h-8 w-8 grid place-items-center rounded-full bg-white/10 hover:bg-white/20"
-              >
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" aria-hidden>
-                  <path d="M6 6l12 12M18 6L6 18" />
-                </svg>
-              </button>
-            </div>
+      <AnimatePresence>
+        {open && (
+          <motion.div
+            key="settings-backdrop"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/40 backdrop-blur-sm"
+            onClick={(e) => {
+              if (e.target === e.currentTarget) setOpen(false);
+            }}
+          >
+            <motion.div
+              key="settings-modal"
+              initial={{ y: 40, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              exit={{ y: 40, opacity: 0 }}
+              transition={{ type: "spring", stiffness: 300, damping: 30 }}
+              className="w-full sm:max-w-md sm:rounded-card-lg rounded-t-card-lg bg-bg p-6 shadow-xl"
+              role="dialog"
+              aria-modal="true"
+              aria-label="Settings"
+            >
+              <div className="flex items-center justify-between mb-5">
+                <h2 className="text-[18px] font-bold text-ink">Settings</h2>
+                <button
+                  onClick={() => setOpen(false)}
+                  aria-label="Close settings"
+                  className="neu-pill h-9 w-9 grid place-items-center text-ink-soft"
+                >
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" aria-hidden>
+                    <path d="M6 6l12 12M18 6L6 18" />
+                  </svg>
+                </button>
+              </div>
 
-            <section className="space-y-2">
-              <label className="block">
-                <div className="text-[12px] font-medium text-white/85">Your calendar</div>
-                <div className="text-[11px] text-white/50 mb-1.5">
+              <section className="space-y-2">
+                <div className="text-[12px] font-semibold text-ink">Your calendar</div>
+                <div className="text-[11px] text-ink-soft">
                   Paste an ICS / webcal URL. Leave blank to use the app&rsquo;s default calendar.
                 </div>
                 <div className="flex gap-2">
@@ -131,22 +137,20 @@ export function SettingsPanel() {
                     value={urlInput}
                     onChange={(e) => setUrlInput(e.target.value)}
                     placeholder="https://calendar.google.com/calendar/ical/…"
-                    className="flex-1 bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-[14px] focus:outline-none focus:border-white/30"
+                    className="flex-1 neu-sunken px-4 py-2.5 text-[14px] text-ink placeholder:text-ink-faint focus:outline-none"
                   />
                   <button
                     onClick={saveUrl}
-                    className="shrink-0 rounded-xl bg-white/10 hover:bg-white/20 px-3 text-[12px] font-medium"
+                    className="shrink-0 neu-pill px-4 py-2.5 text-[12px] font-semibold text-ink"
                   >
                     {urlStatus === "saved" ? "Saved ✓" : "Save"}
                   </button>
                 </div>
-              </label>
-            </section>
+              </section>
 
-            <section className="mt-5 space-y-2">
-              <label className="block">
-                <div className="text-[12px] font-medium text-white/85">Your city</div>
-                <div className="text-[11px] text-white/50 mb-1.5">
+              <section className="mt-6 space-y-2">
+                <div className="text-[12px] font-semibold text-ink">Your city</div>
+                <div className="text-[11px] text-ink-soft">
                   Used for weather when location permission is denied.
                 </div>
                 <div className="flex gap-2">
@@ -155,25 +159,25 @@ export function SettingsPanel() {
                     value={cityInput}
                     onChange={(e) => setCityInput(e.target.value)}
                     placeholder="City name"
-                    className="flex-1 bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-[14px] focus:outline-none focus:border-white/30"
+                    className="flex-1 neu-sunken px-4 py-2.5 text-[14px] text-ink placeholder:text-ink-faint focus:outline-none"
                   />
                   <button
                     onClick={saveCity}
                     disabled={cityStatus === "saving"}
-                    className="shrink-0 rounded-xl bg-white/10 hover:bg-white/20 px-3 text-[12px] font-medium disabled:opacity-50"
+                    className="shrink-0 neu-pill px-4 py-2.5 text-[12px] font-semibold text-ink disabled:opacity-50"
                   >
                     {cityStatus === "saving" ? "…" : cityStatus === "ok" ? "Saved ✓" : cityStatus === "err" ? "Not found" : "Save"}
                   </button>
                 </div>
-              </label>
-            </section>
+              </section>
 
-            <p className="mt-5 text-[11px] text-white/45">
-              Everything is stored locally in your browser. No accounts, no tracking.
-            </p>
-          </div>
-        </div>
-      )}
+              <p className="mt-6 text-[11px] text-ink-faint">
+                Everything is stored locally in your browser. No accounts, no tracking.
+              </p>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </>
   );
 }

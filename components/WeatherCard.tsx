@@ -1,7 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { motion } from "framer-motion";
 import { useLocation } from "@/lib/useLocation";
+import { AnalogClock } from "./AnalogClock";
 
 type Weather = {
   tempNow: number;
@@ -34,51 +36,71 @@ export function WeatherCard() {
   }, [location]);
 
   if (location.status === "loading") {
-    return <Card>Loading weather…</Card>;
+    return (
+      <div className="flex gap-3">
+        <div className="neu-pill h-[100px] w-[100px] animate-pulse" />
+        <div className="neu-card-soft flex-1 h-[100px] animate-pulse" />
+      </div>
+    );
   }
 
   if (location.status === "denied" || location.status === "unavailable") {
     return (
-      <Card>
-        <p className="text-sm text-white/80 mb-1">
+      <div className="neu-card-soft p-5">
+        <p className="text-[14px] text-ink mb-1">
           {location.status === "denied"
             ? "Location permission denied."
             : "Weather unavailable."}
         </p>
-        <p className="text-xs text-white/60">
-          Open <span className="font-medium text-white/80">Settings</span> (gear icon) to set your city.
+        <p className="text-[12px] text-ink-soft">
+          Open <span className="font-semibold text-ink">Settings</span> (gear icon) to set your city.
         </p>
-      </Card>
+      </div>
     );
   }
 
   if (!weather) {
-    return <Card>Fetching forecast for {location.label}…</Card>;
+    return (
+      <div className="flex gap-3">
+        <AnalogClock size={100} />
+        <div className="neu-card-soft flex-1 h-[100px] grid place-items-center text-ink-soft text-sm">
+          Fetching forecast for {location.label}…
+        </div>
+      </div>
+    );
   }
 
   return (
-    <Card>
-      <div className="flex justify-between items-start">
+    <div className="flex gap-3 items-stretch">
+      <motion.div
+        whileTap={{ scale: 0.97 }}
+        className="shrink-0"
+        aria-hidden
+      >
+        <AnalogClock size={100} />
+      </motion.div>
+      <motion.div
+        whileTap={{ scale: 0.985 }}
+        transition={{ type: "spring", stiffness: 400, damping: 28 }}
+        className="neu-card-soft flex-1 p-4 flex flex-col justify-between"
+      >
         <div>
-          <p className="text-xs uppercase tracking-[0.18em] text-white/70">{location.label}</p>
-          <p className="text-[56px] font-semibold leading-none mt-2">{weather.tempNow}°</p>
-          <p className="text-sm text-white/85 mt-1">{weather.condition}</p>
+          <div className="text-[11px] uppercase tracking-[0.18em] text-ink-faint font-semibold">
+            {location.label}
+          </div>
+          <div className="mt-1 text-[44px] font-bold leading-none text-ink">
+            {weather.tempNow}°
+          </div>
         </div>
-      </div>
-      <p className="text-xs text-white/70 mt-4">
-        H: {weather.high}° · L: {weather.low}°
-      </p>
-    </Card>
-  );
-}
-
-function Card({ children }: { children: React.ReactNode }) {
-  return (
-    <section
-      className="rounded-card p-5 text-white"
-      style={{ background: "linear-gradient(135deg, #3B82F6 0%, #1D4ED8 100%)" }}
-    >
-      {children}
-    </section>
+        <div className="flex items-end justify-between">
+          <div className="text-[13px] text-ink-soft font-medium">
+            {weather.condition}
+          </div>
+          <div className="text-[11px] text-ink-faint">
+            H {weather.high}° · L {weather.low}°
+          </div>
+        </div>
+      </motion.div>
+    </div>
   );
 }

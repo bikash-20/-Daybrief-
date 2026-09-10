@@ -3,40 +3,82 @@
 @tailwind utilities;
 
 :root {
-  color-scheme: dark;
-  --bg: #0b1020;
-  --card: rgba(255, 255, 255, 0.06);
-  --card-border: rgba(255, 255, 255, 0.08);
+  /* Soft, warm, tactile "clay" palette. */
+  --bg: #ECE9E3;
+  --bg-2: #E5E1D8;
+  --card: #E9E5DE;
+  --sunken: #DCD7CD;
+  --text: #3A332B;
+  --text-soft: #7C7163;
+  --text-faint: #A89C8C;
+  --accent-1: #F8B4A0;
+  --accent-2: #E89B85;
+  --accent-3: #D27D6A;
+  --shadow-light: rgba(255, 255, 255, 0.85);
+  --shadow-dark: rgba(120, 100, 80, 0.18);
+  --divider: rgba(58, 51, 43, 0.08);
 }
 
-html,
-body {
+html, body {
   background: var(--bg);
-  color: #e6ebf5;
-  font-family:
-    -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text",
-    "Helvetica Neue", "Inter", system-ui, sans-serif;
+  color: var(--text);
+  font-family: "Quicksand", "Nunito", -apple-system, BlinkMacSystemFont,
+    "SF Pro Display", "SF Pro Text", "Helvetica Neue", "Inter", system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
+  font-weight: 500;
 }
 
 body {
   min-height: 100dvh;
   background:
-    radial-gradient(1200px 600px at 50% -10%, rgba(78, 141, 243, 0.18), transparent 60%),
-    linear-gradient(180deg, #0b1020 0%, #060912 100%);
+    radial-gradient(900px 500px at 80% -10%, rgba(248, 180, 160, 0.18), transparent 60%),
+    radial-gradient(800px 600px at 0% 110%, rgba(216, 168, 138, 0.10), transparent 60%),
+    var(--bg);
+}
+
+/* Neumorphic surfaces -------------------------------------------------- */
+@layer components {
+  .neu-raised {
+    background: var(--card);
+    border-radius: 28px;
+    box-shadow:
+      -8px -8px 20px var(--shadow-light),
+      10px 10px 24px var(--shadow-dark);
+  }
+  .neu-sunken {
+    background: var(--sunken);
+    border-radius: 24px;
+    box-shadow:
+      inset 5px 5px 12px var(--shadow-dark),
+      inset -5px -5px 12px var(--shadow-light);
+  }
+  .neu-pill {
+    background: var(--card);
+    border-radius: 999px;
+    box-shadow:
+      -4px -4px 10px var(--shadow-light),
+      5px 5px 12px var(--shadow-dark);
+  }
+  .neu-pill-sunken {
+    background: var(--sunken);
+    border-radius: 999px;
+    box-shadow:
+      inset 3px 3px 7px var(--shadow-dark),
+      inset -3px -3px 7px var(--shadow-light);
+  }
+  .neu-card-soft {
+    background: var(--card);
+    border-radius: 24px;
+    box-shadow:
+      -5px -5px 14px var(--shadow-light),
+      6px 6px 16px var(--shadow-dark);
+  }
 }
 
 /* Hide horizontal scrollbar on the news carousel but keep scroll-snap. */
-.no-scrollbar::-webkit-scrollbar {
-  display: none;
-}
-.no-scrollbar {
-  scrollbar-width: none;
-  -ms-overflow-style: none;
-}
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { scrollbar-width: none; -ms-overflow-style: none; }
 
 /* iOS tap highlight removal */
-* {
-  -webkit-tap-highlight-color: transparent;
-}
+* { -webkit-tap-highlight-color: transparent; }

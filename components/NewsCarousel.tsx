@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { motion } from "framer-motion";
 import type { NewsResponse } from "@/app/api/news/route";
 import { formatRelativeNews } from "@/lib/format";
 
@@ -45,7 +46,7 @@ export function NewsCarousel({ refreshKey }: Props) {
   if (state.status === "loading") {
     const cached = readCache();
     if (cached) return <NewsList items={cached.items} />;
-    return <div className="rounded-card bg-white/5 border border-white/10 h-[180px] animate-pulse" />;
+    return <div className="neu-card-soft h-[200px] animate-pulse" />;
   }
 
   if (state.status === "ok") {
@@ -54,47 +55,71 @@ export function NewsCarousel({ refreshKey }: Props) {
 
   if (state.cached) {
     return (
-      <div>
-        <div className="text-[11px] text-white/55 px-1 mb-2">Offline · {state.message}</div>
-        <NewsList items={state.cached.items} />
-      </div>
+      <section aria-label="Top stories">
+        <div className="flex items-baseline justify-between mb-3">
+          <h2 className="text-[10px] uppercase tracking-[0.18em] text-ink-faint font-semibold">
+            Top stories
+          </h2>
+          <span className="text-[10px] text-ink-faint italic">Offline · {state.message}</span>
+        </div>
+        <NewsList items={state.cached.items} hideTitle />
+      </section>
     );
   }
 
   return (
-    <div className="rounded-card bg-white/5 border border-white/10 px-5 py-5 text-sm text-white/70">
-      News unavailable. {state.message}
-    </div>
+    <motion.section
+      whileTap={{ scale: 0.99 }}
+      className="neu-card-soft p-5 text-[13px] text-ink-soft"
+    >
+      <p>News unavailable.</p>
+      <p className="mt-1 text-[11px] text-ink-faint">{state.message}</p>
+    </motion.section>
   );
 }
 
-function NewsList({ items }: { items: Extract<NewsResponse, { ok: true }>["items"] }) {
+function NewsList({
+  items,
+  hideTitle = false,
+}: {
+  items: Extract<NewsResponse, { ok: true }>["items"];
+  hideTitle?: boolean;
+}) {
   return (
     <section aria-label="Top stories">
-      <div className="flex items-baseline justify-between px-1 mb-2">
-        <h2 className="text-[13px] uppercase tracking-[0.16em] text-white/60">Top stories</h2>
-      </div>
+      {!hideTitle && (
+        <div className="flex items-baseline justify-between mb-3">
+          <h2 className="text-[10px] uppercase tracking-[0.18em] text-ink-faint font-semibold">
+            Top stories
+          </h2>
+        </div>
+      )}
       <div className="no-scrollbar flex gap-3 overflow-x-auto snap-x snap-mandatory pb-2 -mx-5 px-5">
         {items.map((item, i) => (
-          <a
+          <motion.a
             key={`${item.link}-${i}`}
             href={item.link || "#"}
             target="_blank"
             rel="noopener noreferrer"
-            className="snap-start shrink-0 w-[78%] sm:w-[60%] rounded-card bg-white/5 border border-white/10 px-5 py-4 hover:bg-white/8 transition"
+            whileHover={{ y: -2 }}
+            whileTap={{ scale: 0.98 }}
+            transition={{ type: "spring", stiffness: 400, damping: 28 }}
+            className="snap-start shrink-0 w-[78%] sm:w-[60%] neu-card-soft p-4 cursor-pointer"
           >
-            <div className="text-[10px] uppercase tracking-[0.18em] text-white/55">{item.source}</div>
-            <div className="mt-2 text-[15px] font-semibold leading-snug line-clamp-3">
+            <div className="text-[10px] uppercase tracking-[0.18em] text-ink-faint font-semibold">
+              {item.source}
+            </div>
+            <div className="mt-2 text-[15px] font-semibold leading-snug line-clamp-3 text-ink">
               {item.title}
             </div>
             {item.snippet && (
-              <div className="mt-2 text-[12px] text-white/65 line-clamp-2">{item.snippet}</div>
+              <div className="mt-2 text-[12px] text-ink-soft line-clamp-2">{item.snippet}</div>
             )}
-            <div className="mt-3 flex items-center justify-between text-[11px] text-white/55">
+            <div className="mt-3 flex items-center justify-between text-[11px] text-ink-faint">
               <span>{formatRelativeNews(item.publishedAt)} ago</span>
-              <span className="font-medium text-white/75">Read →</span>
+              <span className="font-semibold text-ink-soft">Read →</span>
             </div>
-          </a>
+          </motion.a>
         ))}
       </div>
     </section>

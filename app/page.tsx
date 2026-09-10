@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useState } from "react";
+import { motion } from "framer-motion";
 import { Header } from "@/components/Header";
 import { WeatherCard } from "@/components/WeatherCard";
 import { CalendarCard } from "@/components/CalendarCard";
@@ -8,6 +9,7 @@ import { NewsCarousel } from "@/components/NewsCarousel";
 import { AlarmCard } from "@/components/AlarmCard";
 import { useInstallPrompt } from "@/lib/useInstallPrompt";
 import { usePullToRefresh } from "@/lib/usePullToRefresh";
+import { staggerContainer, staggerItem } from "@/lib/motion";
 
 export default function Home() {
   const [refreshKey, setRefreshKey] = useState(0);
@@ -27,12 +29,25 @@ export default function Home() {
     <main className="mx-auto w-full max-w-md px-0 pb-24 pt-2">
       <Header name="friend" onRefresh={refresh} loading={refreshing} />
 
-      <div className="px-5 space-y-4">
-        <WeatherCard />
-        <CalendarCard />
-        <AlarmCard />
-        <NewsCarousel refreshKey={refreshKey} />
-      </div>
+      <motion.div
+        variants={staggerContainer}
+        initial="hidden"
+        animate="show"
+        className="px-5 space-y-4"
+      >
+        <motion.div variants={staggerItem}>
+          <WeatherCard />
+        </motion.div>
+        <motion.div variants={staggerItem}>
+          <CalendarCard />
+        </motion.div>
+        <motion.div variants={staggerItem}>
+          <AlarmCard />
+        </motion.div>
+        <motion.div variants={staggerItem}>
+          <NewsCarousel refreshKey={refreshKey} />
+        </motion.div>
+      </motion.div>
 
       <Footer canInstall={install.canInstall} onInstall={install.promptInstall} />
     </main>
@@ -49,12 +64,15 @@ function Footer({
   if (!canInstall) return null;
   return (
     <div className="fixed bottom-4 inset-x-0 mx-auto w-fit max-w-[90%] z-40">
-      <button
+      <motion.button
+        whileTap={{ scale: 0.96 }}
+        whileHover={{ y: -1 }}
+        transition={{ type: "spring", stiffness: 400, damping: 28 }}
         onClick={() => void onInstall()}
-        className="rounded-full bg-white text-[#0F172A] text-[13px] font-medium px-4 py-2 shadow-lg hover:bg-white/90"
+        className="neu-pill px-5 py-2.5 text-[13px] font-semibold text-ink"
       >
         Install Daybrief
-      </button>
+      </motion.button>
     </div>
   );
 }

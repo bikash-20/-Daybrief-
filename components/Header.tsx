@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { motion } from "framer-motion";
 import { formatDate, greeting } from "@/lib/format";
 import { SettingsPanel } from "./SettingsPanel";
 
@@ -17,20 +18,23 @@ export function Header({ name, onRefresh, loading }: Props) {
   const { day, full } = formatDate(date);
 
   return (
-    <header className="px-5 pt-6 pb-4 flex items-start justify-between gap-3">
+    <header className="px-6 pt-8 pb-3 flex items-start justify-between gap-3">
       <div>
-        <div className="text-[11px] tracking-[0.18em] text-white/55">{day}</div>
-        <h1 className="mt-1 text-[22px] font-semibold leading-tight">
+        <div className="text-[11px] tracking-[0.22em] text-ink-faint font-semibold uppercase">
+          {day}
+        </div>
+        <h1 className="mt-1 text-[28px] font-bold leading-tight text-ink">
           {now ? greeting(name, now.getHours()) : "Daybrief"}
         </h1>
-        <div className="mt-0.5 text-[13px] text-white/60">{full}</div>
+        <div className="mt-0.5 text-[13px] text-ink-soft font-medium">{full}</div>
       </div>
       <div className="mt-1 flex items-center gap-2">
-        <button
+        <motion.button
           onClick={onRefresh}
           disabled={loading}
           aria-label="Refresh brief"
-          className="h-10 w-10 grid place-items-center rounded-full bg-white/10 hover:bg-white/20 transition disabled:opacity-50"
+          whileTap={{ scale: 0.92 }}
+          className="neu-pill h-11 w-11 grid place-items-center text-ink-soft disabled:opacity-50"
         >
           <svg
             className={loading ? "animate-spin" : ""}
@@ -41,7 +45,7 @@ export function Header({ name, onRefresh, loading }: Props) {
             <path d="M21 12a9 9 0 1 1-3.5-7.1" />
             <path d="M21 4v6h-6" />
           </svg>
-        </button>
+        </motion.button>
         <SettingsPanel />
       </div>
     </header>
