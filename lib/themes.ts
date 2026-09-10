@@ -21,6 +21,8 @@ export type ThemeDef = {
   label: string;
   blurb: string;
   swatch: { bg: string; accent: string; text: string };
+  /** Hex of the page background — used for the OS chrome (title bar, status bar, tile). */
+  bgHex: string;
   /** Native color-scheme hint — dark themes don't need scrollbar overrides. */
   colorScheme: "dark" | "light";
 };
@@ -31,6 +33,7 @@ export const THEMES: ReadonlyArray<ThemeDef> = [
     label: "Deep Mauve",
     blurb: "Warm mauve dust, the Daybrief default.",
     swatch: { bg: "#674D66", accent: "#E89B85", text: "#EBD6DC" },
+    bgHex: "#674D66",
     colorScheme: "dark",
   },
   {
@@ -38,6 +41,7 @@ export const THEMES: ReadonlyArray<ThemeDef> = [
     label: "Sunset",
     blurb: "Burnt amber and coral.",
     swatch: { bg: "#5A2E2A", accent: "#F4896C", text: "#FFD8B5" },
+    bgHex: "#5A2E2A",
     colorScheme: "dark",
   },
   {
@@ -45,6 +49,7 @@ export const THEMES: ReadonlyArray<ThemeDef> = [
     label: "Ocean",
     blurb: "Deep sea blue with cool highlights.",
     swatch: { bg: "#1F2D3D", accent: "#7BC4D4", text: "#DCE7F0" },
+    bgHex: "#1F2D3D",
     colorScheme: "dark",
   },
   {
@@ -52,6 +57,7 @@ export const THEMES: ReadonlyArray<ThemeDef> = [
     label: "Midnight",
     blurb: "Indigo night, electric purple.",
     swatch: { bg: "#0F1226", accent: "#8E84E6", text: "#D9DAF0" },
+    bgHex: "#0F1226",
     colorScheme: "dark",
   },
   {
@@ -59,6 +65,7 @@ export const THEMES: ReadonlyArray<ThemeDef> = [
     label: "Chocolate Rose",
     blurb: "Cocoa with a dusty rose.",
     swatch: { bg: "#3E2A22", accent: "#E29C8D", text: "#F5D6CC" },
+    bgHex: "#3E2A22",
     colorScheme: "dark",
   },
   {
@@ -66,6 +73,7 @@ export const THEMES: ReadonlyArray<ThemeDef> = [
     label: "Pink Rose",
     blurb: "Pastel light — bright by day.",
     swatch: { bg: "#F5E1E0", accent: "#C77F8B", text: "#3A2A2F" },
+    bgHex: "#F5E1E0",
     colorScheme: "light",
   },
 ];
@@ -80,4 +88,9 @@ export function getTheme(id: ThemeId): ThemeDef {
   const t = THEMES.find((x) => x.id === id);
   if (!t) throw new Error(`Unknown theme: ${id}`);
   return t;
+}
+
+/** Hex string of the page background for the given theme — used for OS chrome. */
+export function getThemeBg(id: ThemeId): string {
+  return getTheme(id).bgHex;
 }

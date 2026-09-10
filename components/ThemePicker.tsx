@@ -152,8 +152,9 @@ export function ThemePicker({ applied, onApply }: Props) {
       </div>
 
       <p className="text-[10px] text-ink-faint">
-        Note: an already-installed PWA&apos;s title bar color is set at install time.
-        Uninstall and reinstall Daybrief to update the OS chrome color to match your theme.
+        The page background, all surfaces, and the browser address bar color update instantly.
+        The OS-level PWA title bar is set when you install the app and won&apos;t change
+        between installs — reinstall once after picking your theme to lock in the right color.
       </p>
     </div>
   );

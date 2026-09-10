@@ -5,8 +5,8 @@
   "start_url": "/",
   "display": "standalone",
   "orientation": "portrait",
-  "background_color": "#ECE9E3",
-  "theme_color": "#ECE9E3",
+  "background_color": "#674D66",
+  "theme_color": "#674D66",
   "categories": ["productivity", "news", "utilities"],
   "icons": [
     { "src": "/icons/icon-48.png",   "sizes": "48x48",    "type": "image/png", "purpose": "any" },
