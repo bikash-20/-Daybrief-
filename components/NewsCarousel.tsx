@@ -96,7 +96,7 @@ function NewsList({
           </h2>
         </div>
       )}
-      <div className="no-scrollbar flex gap-3 overflow-x-auto snap-x snap-mandatory pb-2 -mx-4 px-4 sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8 [mask-image:linear-gradient(to_right,transparent,black_1rem,black_calc(100%-1rem),transparent)]">
+      <div className="grid min-w-0 grid-cols-1 gap-3 pb-2 sm:flex sm:overflow-x-auto sm:snap-x sm:snap-mandatory sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
         {items.map((item, i) => (
           <motion.a
             key={`${item.link}-${i}`}
@@ -106,7 +106,7 @@ function NewsList({
             whileTap={{ scale: 0.98 }}
             whileHover={hasHover ? { y: -2 } : undefined}
             transition={{ type: "spring", stiffness: 400, damping: 28 }}
-            className="snap-start shrink-0 w-[78%] sm:w-[55%] lg:w-[40%] neu-card-soft card-pressable p-4 cursor-pointer"
+            className="min-w-0 w-full neu-card-soft card-pressable p-4 cursor-pointer sm:snap-start sm:shrink-0 sm:w-[55%] lg:w-[40%]"
           >
             <div className="text-[12px] uppercase tracking-[0.18em] text-ink-faint font-semibold">
               {item.source}

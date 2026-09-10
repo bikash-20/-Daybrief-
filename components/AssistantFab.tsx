@@ -15,7 +15,7 @@ export function AssistantFab() {
         href="/assistant"
         prefetch
         aria-label="Open assistant"
-        className="neu-pill h-12 w-12 grid place-items-center text-white"
+        className="neu-pill h-11 w-11 grid place-items-center text-white"
         style={{
           background: "linear-gradient(135deg, var(--accent-1) 0%, var(--accent-3) 100%)",
           boxShadow: "0 8px 18px var(--accent-shadow)",

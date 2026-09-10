@@ -1,13 +1,12 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import { motion } from "framer-motion";
 import { Header } from "@/components/Header";
 import { WeatherCard } from "@/components/WeatherCard";
 import { CalendarCard } from "@/components/CalendarCard";
 import { NewsCarousel } from "@/components/NewsCarousel";
 import { AlarmCard } from "@/components/AlarmCard";
-import { AssistantFab } from "@/components/AssistantFab";
 import { useInstallPrompt } from "@/lib/useInstallPrompt";
 import { usePullToRefresh } from "@/lib/usePullToRefresh";
 import { useName } from "@/lib/useName";
@@ -16,7 +15,6 @@ import { staggerContainer, staggerItem } from "@/lib/motion";
 export default function Home() {
   const [refreshKey, setRefreshKey] = useState(0);
   const [refreshing, setRefreshing] = useState(false);
-  const [pullProgress, setPullProgress] = useState(0); // 0..1 for hint
   const install = useInstallPrompt();
   const name = useName();
 
@@ -27,33 +25,11 @@ export default function Home() {
     window.setTimeout(() => setRefreshing(false), 600);
   }, []);
 
-  // Pull-to-refresh scoped to the main element; expose pull distance for
-  // a small visual hint so the gesture isn't invisible.
-  const ptr = usePullToRefresh(refresh);
-
-  useEffect(() => {
-    let raf = 0;
-    const tick = () => {
-      const next = Math.min(1, ptr.getPulledPx() / 120);
-      setPullProgress((prev) => (Math.abs(prev - next) > 0.01 ? next : prev));
-      raf = requestAnimationFrame(tick);
-    };
-    raf = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(raf);
-  }, [ptr]);
-
-  useEffect(() => {
-    if (!refreshing) setPullProgress(0);
-  }, [refreshing]);
+  usePullToRefresh(refresh);
 
   return (
     <>
-      {/* Pull-to-refresh visual hint. Sits absolutely at the top of the
-          main element so it scrolls with content and never overlaps the
-          install/assistant FABs at the bottom. */}
-      <PullHint progress={pullProgress} refreshing={refreshing} />
-
-      <main className="mx-auto w-full max-w-screen-sm lg:max-w-2xl xl:max-w-3xl px-4 sm:px-6 lg:px-8 pb-32 pt-2 pt-[calc(0.5rem+env(safe-area-inset-top))]">
+        <main className="mx-auto min-w-0 w-full max-w-screen-sm overflow-x-hidden px-4 pb-32 pt-[calc(0.5rem+env(safe-area-inset-top))] sm:px-6 lg:max-w-2xl lg:px-8 xl:max-w-3xl">
         <Header name={name} onRefresh={refresh} loading={refreshing} />
 
         <motion.div
@@ -91,7 +67,7 @@ function BottomActions({
 }) {
   return (
     <div
-      className="fixed right-4 z-40 flex flex-col items-end gap-3 sm:right-6"
+      className="fixed right-4 z-40 flex max-w-[calc(100vw-2rem)] flex-col items-end gap-3 sm:right-6"
       style={{
         // bottom = 16px (1rem) on small phones, 24px (1.5rem) on larger
         // screens, plus the home-indicator safe-area inset.
@@ -104,38 +80,11 @@ function BottomActions({
           whileHover={{ y: -1 }}
           transition={{ type: "spring", stiffness: 400, damping: 28 }}
           onClick={() => void onInstall()}
-          className="neu-pill px-4 py-2.5 text-[14px] font-semibold text-ink whitespace-nowrap"
+          className="neu-pill max-w-full px-4 py-2.5 text-center text-[14px] font-semibold text-ink"
         >
           Install Daybrief
         </motion.button>
       )}
-      <AssistantFab />
-    </div>
-  );
-}
-
-function PullHint({ progress, refreshing }: { progress: number; refreshing: boolean }) {
-  const visible = progress > 0.05 || refreshing;
-  const rotation = refreshing ? 360 : progress * 280;
-  return (
-    <div
-      aria-hidden
-      className="fixed top-0 inset-x-0 z-30 grid place-items-center pointer-events-none transition-opacity duration-150"
-      style={{ opacity: visible ? 1 : 0, paddingTop: "calc(0.5rem + env(safe-area-inset-top))" }}
-    >
-      <div
-        className="neu-pill h-9 w-9 grid place-items-center text-ink-soft"
-        style={{ transform: `scale(${0.7 + progress * 0.3})`, transition: "transform 80ms linear" }}
-      >
-        <svg
-          width="16" height="16" viewBox="0 0 24 24" fill="none"
-          stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
-          style={{ transform: `rotate(${rotation}deg)`, transition: refreshing ? "transform 0.6s linear" : undefined }}
-        >
-          <path d="M21 12a9 9 0 1 1-3.5-7.1" />
-          <path d="M21 4v6h-6" />
-        </svg>
-      </div>
     </div>
   );
 }

@@ -43,12 +43,12 @@ export function AlarmCard() {
       whileHover={hasHover ? { y: -1 } : undefined}
       className="neu-card-soft card-pressable p-5"
     >
-      <div className="flex items-center justify-between mb-3">
+      <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
         <h2 className="font-bold text-ink">Alarms</h2>
         <button
           onClick={enableNotifications}
           disabled={permission === "unsupported" || permission === "denied"}
-          className="text-[13px] text-ink-soft hover:text-ink underline disabled:no-underline disabled:opacity-50 font-semibold"
+          className="min-h-11 py-2 text-left text-[13px] text-ink-soft hover:text-ink underline disabled:no-underline disabled:opacity-50 font-semibold"
         >
           {permission === "granted"
             ? "Notifications on"
@@ -83,13 +83,13 @@ export function AlarmCard() {
                 onClick={() => toggleAlarm(a.id)}
                 aria-pressed={a.enabled}
                 aria-label={a.enabled ? "Disable alarm" : "Enable alarm"}
-                className="relative h-6 w-11 rounded-full neu-pill-sunken"
+                className="relative h-11 w-11 shrink-0 rounded-full neu-pill-sunken"
               >
                 <motion.span
                   layout
                   transition={{ type: "spring", stiffness: 700, damping: 30 }}
-                  className={`absolute top-0.5 h-5 w-5 rounded-full shadow ${
-                    a.enabled ? "left-[22px]" : "left-0.5"
+                  className={`absolute top-3 h-5 w-5 rounded-full shadow ${
+                    a.enabled ? "left-[22px]" : "left-3"
                   }`}
                   style={{
                     background: a.enabled
@@ -101,7 +101,7 @@ export function AlarmCard() {
               <button
                 onClick={() => removeAlarm(a.id)}
                 aria-label="Delete alarm"
-                className="text-ink-faint hover:text-ink text-sm"
+                className="h-11 w-11 shrink-0 text-ink-faint hover:text-ink text-sm"
               >
                 ✕
               </button>
@@ -117,23 +117,23 @@ export function AlarmCard() {
           addAlarm(time, label);
           setLabel("");
         }}
-        className="flex gap-2 mt-4"
+        className="mt-4 flex flex-col gap-2 sm:flex-row"
       >
         <input
           type="time"
           value={time}
           onChange={(e) => setTime(e.target.value)}
-          className="neu-sunken px-3 py-2 text-[16px] sm:text-[14px] text-ink focus:outline-none tabular-nums"
+          className="neu-sunken min-h-11 w-full px-3 py-2 text-[16px] sm:w-auto sm:text-[14px] text-ink focus:outline-none tabular-nums"
         />
         <input
           value={label}
           onChange={(e) => setLabel(e.target.value)}
           placeholder="Label (optional)"
-          className="flex-1 neu-sunken px-3 py-2 text-[16px] sm:text-[14px] text-ink placeholder:text-ink-faint focus:outline-none"
+          className="min-w-0 w-full flex-1 neu-sunken px-3 py-2 text-[16px] sm:text-[14px] text-ink placeholder:text-ink-faint focus:outline-none"
         />
         <button
           type="submit"
-          className="neu-pill px-4 py-2 text-[15px] font-semibold text-ink"
+          className="neu-pill min-h-11 w-full px-4 py-2 text-[15px] font-semibold text-ink sm:w-auto"
         >
           Add
         </button>

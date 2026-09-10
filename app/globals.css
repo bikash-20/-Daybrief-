@@ -123,6 +123,7 @@
 html, body {
   background: var(--bg);
   color: var(--text);
+  overflow-x: hidden;
   font-family: "Quicksand", "Nunito", -apple-system, BlinkMacSystemFont,
     "SF Pro Display", "SF Pro Text", "Helvetica Neue", "Inter", system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;

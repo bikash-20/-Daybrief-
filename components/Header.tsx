@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { formatDate, greeting } from "@/lib/format";
+import { AssistantFab } from "./AssistantFab";
 import { SettingsPanel } from "./SettingsPanel";
 
 type Props = {
@@ -18,17 +19,17 @@ export function Header({ name, onRefresh, loading }: Props) {
   const { day, full } = formatDate(date);
 
   return (
-    <header className="px-6 pt-8 pb-3 flex items-start justify-between gap-3">
-      <div>
+    <header className="flex items-start justify-between gap-3 px-0 pb-3 pt-8">
+      <div className="min-w-0 flex-1">
         <div className="text-[13px] tracking-[0.22em] text-ink-faint font-semibold uppercase">
           {day}
         </div>
-        <h1 className="mt-1 text-[28px] font-bold leading-tight text-ink">
+        <h1 className="mt-1 text-[28px] font-bold leading-tight text-ink break-words">
           {now ? greeting(name, now.getHours()) : "Daybrief"}
         </h1>
         <div className="mt-0.5 text-[15px] text-ink-soft font-medium">{full}</div>
       </div>
-      <div className="mt-1 flex items-center gap-2">
+      <div className="mt-1 flex shrink-0 items-center gap-2">
         <motion.button
           onClick={onRefresh}
           disabled={loading}
@@ -46,6 +47,7 @@ export function Header({ name, onRefresh, loading }: Props) {
             <path d="M21 4v6h-6" />
           </svg>
         </motion.button>
+        <AssistantFab />
         <SettingsPanel />
       </div>
     </header>
