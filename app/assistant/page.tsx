@@ -151,14 +151,16 @@ export default function AssistantPage() {
 
   return (
     <main
-      className="mx-auto w-full max-w-2xl lg:max-w-3xl flex flex-col px-4 sm:px-6 lg:px-8 pt-[env(safe-area-inset-top)]"
+      className="mx-auto flex h-[100dvh] min-h-0 w-full max-w-2xl flex-col overflow-hidden px-4 pt-[env(safe-area-inset-top)] sm:px-6 lg:max-w-3xl lg:px-8"
       style={{ height: "100dvh" }}
     >
-      <AssistantHeader />
+      <div className="shrink-0">
+        <AssistantHeader />
+      </div>
 
       <div
         ref={scrollRef}
-        className="flex-1 overflow-y-auto mt-2 space-y-3 overscroll-contain"
+        className="min-h-0 flex-1 space-y-3 overflow-y-auto overscroll-contain"
         style={{ paddingBottom: inputBarHeight }}
         aria-live="polite"
       >
@@ -211,7 +213,7 @@ export default function AssistantPage() {
       */}
       <div
         ref={inputBarRef}
-        className="fixed inset-x-0 z-40 px-4 sm:px-6 lg:px-8 pt-3 pb-4 bg-gradient-to-t from-bg via-bg/95 to-transparent"
+        className="fixed inset-x-0 bottom-0 z-40 bg-gradient-to-t from-bg via-bg/95 to-transparent px-4 pb-4 pt-3 sm:px-6 lg:px-8"
         style={{
           paddingBottom: "calc(1rem + env(safe-area-inset-bottom))",
           transform: keyboardHeight > 0 ? `translateY(-${keyboardHeight}px)` : undefined,
