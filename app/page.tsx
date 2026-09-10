@@ -9,12 +9,14 @@ import { NewsCarousel } from "@/components/NewsCarousel";
 import { AlarmCard } from "@/components/AlarmCard";
 import { useInstallPrompt } from "@/lib/useInstallPrompt";
 import { usePullToRefresh } from "@/lib/usePullToRefresh";
+import { useName } from "@/lib/useName";
 import { staggerContainer, staggerItem } from "@/lib/motion";
 
 export default function Home() {
   const [refreshKey, setRefreshKey] = useState(0);
   const [refreshing, setRefreshing] = useState(false);
   const install = useInstallPrompt();
+  const name = useName();
 
   const refresh = useCallback(() => {
     setRefreshing(true);
@@ -27,7 +29,7 @@ export default function Home() {
 
   return (
     <main className="mx-auto w-full max-w-md px-0 pb-24 pt-2">
-      <Header name="friend" onRefresh={refresh} loading={refreshing} />
+      <Header name={name} onRefresh={refresh} loading={refreshing} />
 
       <motion.div
         variants={staggerContainer}

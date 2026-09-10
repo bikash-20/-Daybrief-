@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { CALENDAR_URL_KEY } from "./CalendarCard.shared";
+import { NAME_STORAGE_KEY } from "@/lib/useName";
 
 const CITY_KEY = "daybrief:manual-location";
 
@@ -10,12 +11,15 @@ export function SettingsPanel() {
   const [open, setOpen] = useState(false);
   const [urlInput, setUrlInput] = useState("");
   const [cityInput, setCityInput] = useState("");
+  const [nameInput, setNameInput] = useState("");
   const [cityStatus, setCityStatus] = useState<"idle" | "saving" | "ok" | "err">("idle");
   const [urlStatus, setUrlStatus] = useState<"idle" | "saved">("idle");
+  const [nameStatus, setNameStatus] = useState<"idle" | "saved">("idle");
 
   useEffect(() => {
     if (!open) return;
     setUrlInput(localStorage.getItem(CALENDAR_URL_KEY) ?? "");
+    setNameInput(localStorage.getItem(NAME_STORAGE_KEY) ?? "");
     try {
       const stored = localStorage.getItem(CITY_KEY);
       if (stored) setCityInput(JSON.parse(stored).label ?? "");
@@ -23,6 +27,18 @@ export function SettingsPanel() {
       /* ignore */
     }
   }, [open]);
+
+  function saveName() {
+    const v = nameInput.trim();
+    if (v) {
+      localStorage.setItem(NAME_STORAGE_KEY, v);
+    } else {
+      localStorage.removeItem(NAME_STORAGE_KEY);
+    }
+    window.dispatchEvent(new Event("daybrief:name-change"));
+    setNameStatus("saved");
+    window.setTimeout(() => setNameStatus("idle"), 1200);
+  }
 
   function saveUrl() {
     if (urlInput.trim()) {
@@ -127,6 +143,29 @@ export function SettingsPanel() {
               </div>
 
               <section className="space-y-2">
+                <div className="text-[12px] font-semibold text-ink">Your name</div>
+                <div className="text-[11px] text-ink-soft">
+                  Used in the greeting. Leave blank to fall back to &ldquo;friend&rdquo;.
+                </div>
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    value={nameInput}
+                    onChange={(e) => setNameInput(e.target.value)}
+                    placeholder="Your first name"
+                    maxLength={32}
+                    className="flex-1 neu-sunken px-4 py-2.5 text-[14px] text-ink placeholder:text-ink-faint focus:outline-none"
+                  />
+                  <button
+                    onClick={saveName}
+                    className="shrink-0 neu-pill px-4 py-2.5 text-[12px] font-semibold text-ink"
+                  >
+                    {nameStatus === "saved" ? "Saved ✓" : "Save"}
+                  </button>
+                </div>
+              </section>
+
+              <section className="mt-6 space-y-2">
                 <div className="text-[12px] font-semibold text-ink">Your calendar</div>
                 <div className="text-[11px] text-ink-soft">
                   Paste an ICS / webcal URL. Leave blank to use the app&rsquo;s default calendar.
