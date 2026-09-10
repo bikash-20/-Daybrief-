@@ -1,6 +1,12 @@
 "use client";
 
 import { motion } from "framer-motion";
+import dynamic from "next/dynamic";
+
+const Markdown = dynamic(() => import("@/components/Markdown").then((m) => m.Markdown), {
+  ssr: false,
+  loading: () => <div className="text-ink-faint text-[13px]">…</div>,
+});
 
 export type ChatBubble = {
   id: string;
@@ -68,8 +74,8 @@ export function ChatMessage({ msg }: { msg: ChatBubble }) {
       className="flex justify-start"
     >
       <div className="max-w-[88%] sm:max-w-[80%]">
-        <div className="neu-pill-sunken px-4 py-3 text-[14px] text-ink whitespace-pre-wrap leading-relaxed">
-          {msg.content}
+        <div className="neu-pill-sunken px-4 py-3 text-[14px] text-ink">
+          <Markdown content={msg.content} />
         </div>
         {msg.modelUsed && (
           <div className="mt-1 ml-3 text-[10px] text-ink-faint uppercase tracking-[0.16em] font-semibold">

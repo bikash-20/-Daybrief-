@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { CALENDAR_URL_KEY } from "./CalendarCard.shared";
 import { NAME_STORAGE_KEY } from "@/lib/useName";
+import { useTheme } from "@/lib/useTheme";
+import { ThemePicker } from "./ThemePicker";
 
 const CITY_KEY = "daybrief:manual-location";
 
@@ -15,6 +17,7 @@ export function SettingsPanel() {
   const [cityStatus, setCityStatus] = useState<"idle" | "saving" | "ok" | "err">("idle");
   const [urlStatus, setUrlStatus] = useState<"idle" | "saved">("idle");
   const [nameStatus, setNameStatus] = useState<"idle" | "saved">("idle");
+  const { theme, setTheme } = useTheme();
 
   useEffect(() => {
     if (!open) return;
@@ -163,6 +166,10 @@ export function SettingsPanel() {
                     {nameStatus === "saved" ? "Saved ✓" : "Save"}
                   </button>
                 </div>
+              </section>
+
+              <section className="mt-6">
+                <ThemePicker applied={theme} onApply={setTheme} />
               </section>
 
               <section className="mt-6 space-y-2">

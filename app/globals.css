@@ -2,23 +2,123 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  /* Soft, warm, tactile "clay" palette. */
-  --bg: #ECE9E3;
-  --bg-2: #E5E1D8;
-  --card: #F4F0E9;
-  --sunken: #D8D2C6;
-  --text: #2E2820;
-  --text-soft: #756A5C;
-  --text-faint: #A89C8C;
+/* ============================================================
+   Theme tokens. Six hand-tuned palettes; each overrides the
+   12 design tokens. Apply by setting [data-theme="<id>"] on <html>.
+   ============================================================ */
+
+:root,
+[data-theme="mauve"] {
+  --bg: #674D66;
+  --bg-2: #5C445B;
+  --card: #7C5E78;
+  --sunken: #574058;
+  --text: #EBD6DC;
+  --text-soft: #C9B3BC;
+  --text-faint: #9A8593;
   --accent-1: #F8B4A0;
   --accent-2: #ED9A82;
-  --accent-3: #D8755F;
-  --accent-shadow: rgba(216, 117, 95, 0.45);
-  --shadow-light: rgba(255, 255, 255, 0.95);
-  --shadow-dark: rgba(110, 90, 70, 0.28);
-  --divider: rgba(58, 51, 43, 0.08);
+  --accent-3: #E89B85;
+  --accent-shadow: rgba(232, 155, 133, 0.45);
+  --shadow-light: rgba(255, 255, 255, 0.10);
+  --shadow-dark: rgba(0, 0, 0, 0.32);
+  --divider: rgba(235, 214, 220, 0.10);
+  color-scheme: dark;
 }
+
+[data-theme="sunset"] {
+  --bg: #5A2E2A;
+  --bg-2: #4A2522;
+  --card: #724038;
+  --sunken: #482321;
+  --text: #FFD8B5;
+  --text-soft: #E5B295;
+  --text-faint: #A37F6A;
+  --accent-1: #FFB58A;
+  --accent-2: #F4896C;
+  --accent-3: #E26A4A;
+  --accent-shadow: rgba(242, 137, 108, 0.50);
+  --shadow-light: rgba(255, 200, 160, 0.12);
+  --shadow-dark: rgba(0, 0, 0, 0.36);
+  --divider: rgba(255, 216, 181, 0.10);
+  color-scheme: dark;
+}
+
+[data-theme="ocean"] {
+  --bg: #1F2D3D;
+  --bg-2: #182534;
+  --card: #2A3D52;
+  --sunken: #172230;
+  --text: #DCE7F0;
+  --text-soft: #A5B5C2;
+  --text-faint: #6E8194;
+  --accent-1: #A8DDE7;
+  --accent-2: #7BC4D4;
+  --accent-3: #5AAEC0;
+  --accent-shadow: rgba(123, 196, 212, 0.45);
+  --shadow-light: rgba(180, 220, 240, 0.10);
+  --shadow-dark: rgba(0, 0, 0, 0.42);
+  --divider: rgba(220, 231, 240, 0.10);
+  color-scheme: dark;
+}
+
+[data-theme="midnight"] {
+  --bg: #0F1226;
+  --bg-2: #080A1A;
+  --card: #1B1F3A;
+  --sunken: #080A1A;
+  --text: #D9DAF0;
+  --text-soft: #A4A6CC;
+  --text-faint: #6E719A;
+  --accent-1: #B6ACE8;
+  --accent-2: #8E84E6;
+  --accent-3: #7466D4;
+  --accent-shadow: rgba(142, 132, 230, 0.50);
+  --shadow-light: rgba(200, 200, 255, 0.08);
+  --shadow-dark: rgba(0, 0, 0, 0.55);
+  --divider: rgba(217, 218, 240, 0.10);
+  color-scheme: dark;
+}
+
+[data-theme="chocolate-rose"] {
+  --bg: #3E2A22;
+  --bg-2: #32201A;
+  --card: #52392F;
+  --sunken: #2D1E18;
+  --text: #F5D6CC;
+  --text-soft: #D5A89B;
+  --text-faint: #957366;
+  --accent-1: #F0B5A6;
+  --accent-2: #E29C8D;
+  --accent-3: #C97D6C;
+  --accent-shadow: rgba(226, 156, 141, 0.45);
+  --shadow-light: rgba(255, 220, 210, 0.10);
+  --shadow-dark: rgba(0, 0, 0, 0.42);
+  --divider: rgba(245, 214, 204, 0.10);
+  color-scheme: dark;
+}
+
+[data-theme="pink-rose"] {
+  --bg: #F5E1E0;
+  --bg-2: #EFD6D4;
+  --card: #FFFFFF;
+  --sunken: #E8CFD0;
+  --text: #3A2A2F;
+  --text-soft: #6E5460;
+  --text-faint: #A38A92;
+  --accent-1: #E0A8B0;
+  --accent-2: #D08C97;
+  --accent-3: #C77F8B;
+  --accent-shadow: rgba(199, 127, 139, 0.40);
+  --shadow-light: rgba(255, 255, 255, 0.95);
+  --shadow-dark: rgba(80, 50, 60, 0.18);
+  --divider: rgba(58, 42, 47, 0.08);
+  color-scheme: light;
+}
+
+/* ============================================================
+   Base elements
+   ============================================================ */
 
 html, body {
   background: var(--bg);
@@ -33,12 +133,14 @@ html, body {
 body {
   min-height: 100dvh;
   background:
-    radial-gradient(900px 500px at 80% -10%, rgba(248, 180, 160, 0.18), transparent 60%),
-    radial-gradient(800px 600px at 0% 110%, rgba(216, 168, 138, 0.10), transparent 60%),
+    radial-gradient(900px 500px at 80% -10%, var(--accent-shadow), transparent 60%),
+    radial-gradient(800px 600px at 0% 110%, rgba(255, 255, 255, 0.04), transparent 60%),
     var(--bg);
 }
 
-/* Neumorphic surfaces -------------------------------------------------- */
+/* ============================================================
+   Neumorphic surfaces — same engine, theme-aware
+   ============================================================ */
 @layer components {
   .neu-raised {
     background: var(--card);
@@ -77,9 +179,102 @@ body {
   }
 }
 
-/* Hide horizontal scrollbar on the news carousel but keep scroll-snap. */
+/* ============================================================
+   Markdown rendering — used by assistant replies
+   ============================================================ */
+@layer components {
+  .md-body {
+    color: var(--text);
+    font-size: 14px;
+    line-height: 1.55;
+  }
+  .md-body > * + * { margin-top: 0.55rem; }
+  .md-body strong { color: var(--text); font-weight: 700; }
+  .md-body em { color: var(--text-soft); font-style: italic; }
+  .md-body a {
+    color: var(--accent-3);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    text-decoration-thickness: 1px;
+  }
+  .md-body h1, .md-body h2, .md-body h3 {
+    color: var(--text);
+    font-weight: 700;
+    margin-top: 0.9rem;
+  }
+  .md-body h1 { font-size: 18px; }
+  .md-body h2 { font-size: 16px; }
+  .md-body h3 { font-size: 14px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-soft); }
+  .md-body ul, .md-body ol {
+    padding-left: 1.2rem;
+    color: var(--text);
+  }
+  .md-body ul { list-style: disc; }
+  .md-body ol { list-style: decimal; }
+  .md-body li + li { margin-top: 0.2rem; }
+  .md-body hr {
+    border: 0;
+    border-top: 1px solid var(--divider);
+    margin: 0.9rem 0;
+  }
+  .md-body blockquote {
+    border-left: 3px solid var(--accent-3);
+    padding: 0.1rem 0 0.1rem 0.8rem;
+    color: var(--text-soft);
+    font-style: italic;
+  }
+  .md-body table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+    border: 1px solid var(--divider);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+  .md-body th, .md-body td {
+    padding: 0.5rem 0.7rem;
+    border-bottom: 1px solid var(--divider);
+    text-align: left;
+  }
+  .md-body th {
+    background: var(--sunken);
+    color: var(--text);
+    font-weight: 700;
+  }
+  .md-body tbody tr:nth-child(even) td { background: rgba(255, 255, 255, 0.02); }
+  .md-body code:not(pre code) {
+    background: var(--sunken);
+    color: var(--text);
+    border-radius: 6px;
+    padding: 1px 6px;
+    font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    font-size: 12.5px;
+  }
+  .md-body pre {
+    background: var(--sunken);
+    color: var(--text);
+    border-radius: 14px;
+    padding: 0.8rem 0.9rem;
+    overflow-x: auto;
+    font-size: 12.5px;
+    line-height: 1.5;
+    border: 1px solid var(--divider);
+  }
+  .md-body pre code {
+    background: transparent !important;
+    color: inherit !important;
+    padding: 0 !important;
+    font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  }
+}
+
+/* KaTeX font + theme-aware color */
+.katex { color: var(--text); font-size: 1em; }
+
+/* ============================================================
+   Utilities
+   ============================================================ */
 .no-scrollbar::-webkit-scrollbar { display: none; }
 .no-scrollbar { scrollbar-width: none; -ms-overflow-style: none; }
 
-/* iOS tap highlight removal */
 * { -webkit-tap-highlight-color: transparent; }

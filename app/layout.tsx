@@ -1,5 +1,10 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
+import "katex/dist/katex.min.css";
+import { ThemeApplier } from "@/components/ThemeApplier";
+import { DEFAULT_THEME } from "@/lib/themes";
+
+const SITE_URL = process.env.SITE_URL || "https://daybrief.app";
 
 export const metadata: Metadata = {
   title: "Daybrief",
@@ -28,19 +33,30 @@ export const metadata: Metadata = {
     ],
     other: [
       { rel: "apple-touch-icon-precomposed", url: "/icons/apple-touch-icon.png", sizes: "180x180" },
-      // Windows pinned tile
       { rel: "msapplication-TileImage", url: "/icons/icon-256.png" },
     ],
   },
   manifest: "/manifest.json",
+  metadataBase: new URL(SITE_URL),
 };
 
 export const viewport: Viewport = {
-  themeColor: "#ECE9E3",
   width: "device-width",
   initialScale: 1,
   viewportFit: "cover",
 };
+
+// Inline FOUC-prevention: applies the stored theme attribute to <html> before
+// any React or stylesheet activity, so users never see a flash of the wrong
+// theme on cold load.
+const themeInitScript = `
+(function(){try{
+  var k='daybrief:theme';
+  var d=document.documentElement;
+  var v=localStorage.getItem(k);
+  d.setAttribute('data-theme', v && /^(mauve|sunset|ocean|midnight|chocolate-rose|pink-rose)$/.test(v) ? v : '${DEFAULT_THEME}');
+}catch(e){}})();
+`.trim();
 
 export default function RootLayout({
   children,
@@ -48,10 +64,16 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
-        {/* Windows pinned-tile background color */}
+        <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
+        {/* Tile color kept generic cream — the live theme-color is set per-page
+            by the client ThemeApplier so newly-installed PWAs will pick up the
+            user's chosen theme via the manifest read on next install. */}
         <meta name="msapplication-TileColor" content="#ECE9E3" />
       </head>
-      <body className="antialiased">{children}</body>
+      <body className="antialiased">
+        <ThemeApplier />
+        {children}
+      </body>
     </html>
   );
 }
