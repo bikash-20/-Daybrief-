@@ -5,6 +5,7 @@ import { AnimatePresence, motion, type PanInfo } from "framer-motion";
 import { useTheme } from "@/lib/useTheme";
 import { useBackHandler } from "@/lib/useBackHandler";
 import { useBodyScrollLock } from "@/lib/useBodyScrollLock";
+import { useHasHover } from "@/lib/useHasHover";
 import { ThemePicker } from "./ThemePicker";
 import { NameSection } from "./settings/NameSection";
 import { CalendarSection } from "./settings/CalendarSection";
@@ -20,6 +21,7 @@ const SWIPE_DISMISS_VELOCITY = 500;
 export function SettingsPanel() {
   const [open, setOpen] = useState(false);
   const { theme, setTheme } = useTheme();
+  const hasHover = useHasHover();
 
   const close = () => setOpen(false);
   useBackHandler(open, close);
@@ -64,8 +66,8 @@ export function SettingsPanel() {
         aria-haspopup="dialog"
         aria-expanded={open}
         onClick={() => setOpen(true)}
-        whileTap={{ scale: 0.92, rotate: 30 }}
-        whileHover={{ rotate: 30 }}
+        whileTap={{ scale: 0.92 }}
+        whileHover={hasHover ? { rotate: 30 } : undefined}
         transition={{ type: "spring", stiffness: 300, damping: 18 }}
         className="neu-pill h-11 w-11 grid place-items-center text-ink-soft"
       >
@@ -111,7 +113,6 @@ export function SettingsPanel() {
                 h-[92dvh] sm:h-auto sm:max-h-[90dvh]
                 rounded-t-card-lg sm:rounded-card-lg
                 overflow-hidden
-                pb-[env(safe-area-inset-bottom)]
               "
             >
               <div
@@ -133,7 +134,17 @@ export function SettingsPanel() {
                 </button>
               </div>
 
-              <div className="flex-1 overflow-y-auto overscroll-contain px-6 pb-6 -webkit-overflow-scrolling-touch space-y-6">
+              <div
+                className="flex-1 overflow-y-auto overscroll-contain px-6 pb-6 -webkit-overflow-scrolling-touch space-y-6"
+                style={{
+                  // Safe-area lives on the scroll region, not the wrapper, so
+                  // the last row sits above the iPhone home indicator when
+                  // the user scrolls to the bottom. Also pad scroll snap so
+                  // focus jumps land above the bottom inset.
+                  paddingBottom: "calc(1.5rem + env(safe-area-inset-bottom))",
+                  scrollPaddingBottom: "env(safe-area-inset-bottom)",
+                }}
+              >
                 <NameSection />
                 <ThemePicker applied={theme} onApply={setTheme} />
                 <CalendarSection />

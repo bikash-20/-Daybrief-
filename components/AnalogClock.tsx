@@ -68,12 +68,17 @@ export function AnalogClock({ size = 96 }: Props) {
             />
           );
         })}
-        {/* Hour hand */}
-        <g style={{ transformOrigin: `${cx}% ${cy}%`, transform: `rotate(${h * 30}deg)` }}>
+        {/*
+          Hands use absolute transform-origin (50 50) instead of `50% 50%`.
+          Safari iOS has historic bugs with `transform-box: fill-box` on
+          SVG `<g>` elements; pinning to viewBox coords is the cross-browser
+          safe choice. (`transform-box: view-box` is also set in CSS for
+          the same reason.)
+        */}
+        <g style={{ transformOrigin: "50px 50px", transform: `rotate(${h * 30}deg)` }}>
           <line x1={cx} y1={cy} x2={cx} y2="26" stroke="var(--text)" strokeWidth="3" strokeLinecap="round" />
         </g>
-        {/* Minute hand */}
-        <g style={{ transformOrigin: `${cx}% ${cy}%`, transform: `rotate(${m * 6}deg)` }}>
+        <g style={{ transformOrigin: "50px 50px", transform: `rotate(${m * 6}deg)` }}>
           <line x1={cx} y1={cy} x2={cx} y2="16" stroke="var(--text)" strokeWidth="2" strokeLinecap="round" />
         </g>
         {/* Second hand — pure CSS rotation, 60s linear loop. */}

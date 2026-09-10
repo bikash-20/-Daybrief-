@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import type { NewsResponse } from "@/app/api/news/route";
 import { formatRelativeNews } from "@/lib/format";
+import { useHasHover } from "@/lib/useHasHover";
 
 type Props = { refreshKey: number };
 
@@ -85,6 +86,7 @@ function NewsList({
   items: Extract<NewsResponse, { ok: true }>["items"];
   hideTitle?: boolean;
 }) {
+  const hasHover = useHasHover();
   return (
     <section aria-label="Top stories">
       {!hideTitle && (
@@ -94,17 +96,17 @@ function NewsList({
           </h2>
         </div>
       )}
-      <div className="no-scrollbar flex gap-3 overflow-x-auto snap-x snap-mandatory pb-2 -mx-5 px-5 sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8 [mask-image:linear-gradient(to_right,transparent,black_1rem,black_calc(100%-1rem),transparent)]">
+      <div className="no-scrollbar flex gap-3 overflow-x-auto snap-x snap-mandatory pb-2 -mx-4 px-4 sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8 [mask-image:linear-gradient(to_right,transparent,black_1rem,black_calc(100%-1rem),transparent)]">
         {items.map((item, i) => (
           <motion.a
             key={`${item.link}-${i}`}
             href={item.link || "#"}
             target="_blank"
             rel="noopener noreferrer"
-            whileHover={{ y: -2 }}
             whileTap={{ scale: 0.98 }}
+            whileHover={hasHover ? { y: -2 } : undefined}
             transition={{ type: "spring", stiffness: 400, damping: 28 }}
-            className="snap-start shrink-0 w-[88%] sm:w-[55%] lg:w-[40%] neu-card-soft p-4 cursor-pointer"
+            className="snap-start shrink-0 w-[78%] sm:w-[55%] lg:w-[40%] neu-card-soft card-pressable p-4 cursor-pointer"
           >
             <div className="text-[12px] uppercase tracking-[0.18em] text-ink-faint font-semibold">
               {item.source}

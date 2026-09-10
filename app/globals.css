@@ -357,10 +357,12 @@ body {
 .no-scrollbar { scrollbar-width: none; -ms-overflow-style: none; }
 
 /* CSS-only second hand sweep — no JS per frame.
-   Origin set in the SVG via class for cross-browser compatibility. */
+   Origin set in the SVG via class for cross-browser compatibility.
+   `view-box` keeps the second-hand rotation anchored even when
+   `fill-box` quirks bite Safari iOS. */
 .clock-second-hand {
   transform-origin: 50% 50%;
-  transform-box: fill-box;
+  transform-box: view-box;
   animation: clock-sweep 60s linear infinite;
 }
 @keyframes clock-sweep {
@@ -369,3 +371,61 @@ body {
 }
 
 * { -webkit-tap-highlight-color: transparent; }
+
+/* ============================================================
+   Mobile-first touch utilities.
+
+   .card-pressable replaces framer-motion's whileTap={{ scale }}
+   for static (decorative) cards. Press feedback comes from CSS,
+   so the JS thread is free during the press. Cheaper on mid-range
+   Android by a wide margin.
+
+   .touch-row enforces the 44pt Apple/Google minimum tap height.
+   ============================================================ */
+@layer components {
+  .card-pressable {
+    transition: transform 120ms ease-out;
+    will-change: transform;
+  }
+  .card-pressable:active {
+    transform: scale(0.985);
+  }
+
+  .touch-row {
+    min-height: 44px;
+  }
+}
+
+/* Suppress iOS double-tap-to-zoom and the long-press callout.
+   Applies only to interactive elements — leaves text selectable. */
+button,
+a[href],
+[role="button"],
+input,
+textarea,
+select {
+  touch-action: manipulation;
+}
+
+/* Respect the user's motion preference globally. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+  .card-pressable:active { transform: none; }
+  .clock-second-hand { animation: none; }
+}
+
+/* Installed PWA: the URL bar is gone, so we can drop a bit of top safe-area
+   padding. iOS Safari reports display-mode: standalone for installed apps. */
+@media (display-mode: standalone) {
+  body {
+    /* Tiny extra top padding because there's no system status bar to chase. */
+    padding-top: env(safe-area-inset-top);
+  }
+}

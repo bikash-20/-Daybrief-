@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { useLocation } from "@/lib/useLocation";
+import { useHasHover } from "@/lib/useHasHover";
 import { AnalogClock } from "./AnalogClock";
 
 type Weather = {
@@ -16,6 +17,7 @@ type Weather = {
 export function WeatherCard() {
   const { location } = useLocation();
   const [weather, setWeather] = useState<Weather | null>(null);
+  const hasHover = useHasHover();
 
   useEffect(() => {
     if (location.status !== "ready") return;
@@ -37,9 +39,12 @@ export function WeatherCard() {
 
   if (location.status === "loading") {
     return (
-      <div className="flex flex-col sm:flex-row gap-3">
+      <div className="flex flex-col sm:flex-row gap-3" role="status" aria-live="polite">
         <div className="neu-pill h-[100px] w-[100px] animate-pulse" />
-        <div className="neu-card-soft flex-1 h-[100px] animate-pulse" />
+        <div className="neu-card-soft flex-1 h-[100px] flex flex-col items-center justify-center text-ink-faint text-[14px] gap-2">
+          <div className="h-3 w-32 rounded-full bg-ink/[0.08] animate-pulse" />
+          <span>Finding your location…</span>
+        </div>
       </div>
     );
   }
@@ -61,10 +66,10 @@ export function WeatherCard() {
 
   if (!weather) {
     return (
-      <div className="flex flex-col sm:flex-row gap-3">
+      <div className="flex flex-col sm:flex-row gap-3" role="status" aria-live="polite">
         <AnalogClock size={100} />
-        <div className="neu-card-soft flex-1 h-[100px] grid place-items-center text-ink-soft text-sm">
-          Fetching forecast for {location.label}…
+        <div className="neu-card-soft flex-1 h-[100px] grid place-items-center text-ink-soft text-[14px] text-center px-4">
+          Reading forecast for {location.label}…
         </div>
       </div>
     );
@@ -81,8 +86,9 @@ export function WeatherCard() {
       </motion.div>
       <motion.div
         whileTap={{ scale: 0.985 }}
+        whileHover={hasHover ? { y: -1 } : undefined}
         transition={{ type: "spring", stiffness: 400, damping: 28 }}
-        className="neu-card-soft flex-1 p-4 flex flex-col justify-between"
+        className="neu-card-soft card-pressable flex-1 p-4 flex flex-col justify-between"
       >
         <div>
           <div className="text-[13px] uppercase tracking-[0.18em] text-ink-faint font-semibold">

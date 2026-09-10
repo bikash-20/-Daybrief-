@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { CALENDAR_URL_KEY } from "./CalendarCard.shared";
+import { useHasHover } from "@/lib/useHasHover";
 
 type CalEvent = { title: string; start: string; end: string };
 type CalResponse = {
@@ -16,6 +17,7 @@ export function CalendarCard() {
   const [data, setData] = useState<CalResponse | null>(null);
   const [refreshTick, setRefreshTick] = useState(0);
   const [now] = useState(() => new Date());
+  const hasHover = useHasHover();
 
   // AbortController for the in-flight fetch; rapid refreshes cancel stale ones.
   const ctrlRef = useRef<AbortController | null>(null);
@@ -61,12 +63,16 @@ export function CalendarCard() {
   }, []);
 
   if (!data) {
-    return <div className="neu-card-soft h-[260px] animate-pulse" />;
+    return (
+      <div className="neu-card-soft h-[260px] grid place-items-center text-ink-faint text-[14px]" role="status" aria-live="polite">
+        Loading calendar…
+      </div>
+    );
   }
 
   if (!data.configured) {
     return (
-      <motion.section whileTap={{ scale: 0.99 }} className="neu-card-soft p-5">
+      <motion.section whileTap={{ scale: 0.99 }} className="neu-card-soft card-pressable p-5">
         <p className="text-[15px] text-ink mb-1">No calendar configured.</p>
         <p className="text-[14px] text-ink-soft">
           Add your calendar link from <span className="font-semibold text-ink">Settings</span> (gear icon).
@@ -78,7 +84,8 @@ export function CalendarCard() {
   return (
     <motion.section
       whileTap={{ scale: 0.99 }}
-      className="neu-card-soft p-5"
+      whileHover={hasHover ? { y: -1 } : undefined}
+      className="neu-card-soft card-pressable p-5"
     >
       <div className="flex items-baseline justify-between mb-4">
         <h2 className="font-bold text-ink">

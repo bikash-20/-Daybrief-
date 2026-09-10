@@ -27,6 +27,28 @@ export function useAlarms() {
   const alarmsRef = useRef<Alarm[]>([]);
   alarmsRef.current = alarms;
 
+  /**
+   * Resume the shared AudioContext inside a user gesture.
+   *
+   * Both iOS Safari and Chrome Android require a user gesture before
+   * AudioContext can produce sound. The first time a user installs the
+   * PWA, the context is created on-demand but `resume()` will be pending
+   * until they tap anything. Call this from any button click that would
+   * reasonably precede an alarm — adding an alarm, enabling notifications,
+   * or pressing the test button if you add one.
+   *
+   * Safe to call multiple times — it's a no-op once the context is running.
+   */
+  const unlockAudio = useCallback(() => {
+    const ctx = getAudioCtx();
+    if (!ctx) return;
+    if (ctx.state === "suspended") {
+      ctx.resume().catch(() => {
+        /* best-effort; the next attempt will retry */
+      });
+    }
+  }, []);
+
   useEffect(() => {
     try {
       const raw = localStorage.getItem(STORAGE_KEY);
@@ -111,7 +133,7 @@ export function useAlarms() {
     };
   }, []);
 
-  return { alarms, addAlarm, toggleAlarm, removeAlarm, hydrated };
+  return { alarms, addAlarm, toggleAlarm, removeAlarm, hydrated, unlockAudio };
 }
 
 // Reused across the page so we don't spin up an AudioContext per alarm tick.
@@ -148,22 +170,33 @@ function fireAlarm(alarm: Alarm) {
   try {
     const ctx = getAudioCtx();
     if (!ctx) return;
-    const osc = ctx.createOscillator();
-    const gain = ctx.createGain();
-    osc.frequency.value = 880;
-    gain.gain.value = 0.15;
-    osc.connect(gain).connect(ctx.destination);
-    osc.start();
-    window.setTimeout(() => {
-      osc.stop();
-      // Don't close the context — it's reused. Just disconnect.
-      try {
-        osc.disconnect();
-        gain.disconnect();
-      } catch {
-        /* ignore */
-      }
-    }, 600);
+    const play = () => {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.frequency.value = 880;
+      gain.gain.value = 0.15;
+      osc.connect(gain).connect(ctx.destination);
+      osc.start();
+      window.setTimeout(() => {
+        osc.stop();
+        // Don't close the context — it's reused. Just disconnect.
+        try {
+          osc.disconnect();
+          gain.disconnect();
+        } catch {
+          /* ignore */
+        }
+      }, 600);
+    };
+    if (ctx.state === "suspended") {
+      // Try to resume; if it succeeds, play immediately. Otherwise the
+      // next user gesture will unlock and subsequent alarms will sound.
+      ctx.resume().then(play).catch(() => {
+        /* gesture-gated; will retry on next user interaction */
+      });
+    } else {
+      play();
+    }
   } catch {
     /* ignore */
   }

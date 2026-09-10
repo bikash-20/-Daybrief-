@@ -3,12 +3,14 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { requestAlarmPermission, useAlarms } from "@/lib/useAlarms";
+import { useHasHover } from "@/lib/useHasHover";
 
 export function AlarmCard() {
-  const { alarms, addAlarm, toggleAlarm, removeAlarm, hydrated } = useAlarms();
+  const { alarms, addAlarm, toggleAlarm, removeAlarm, hydrated, unlockAudio } = useAlarms();
   const [time, setTime] = useState("07:00");
   const [label, setLabel] = useState("");
   const [permission, setPermission] = useState<NotificationPermission | "unsupported">("default");
+  const hasHover = useHasHover();
 
   useEffect(() => {
     if (typeof Notification === "undefined") {
@@ -19,18 +21,27 @@ export function AlarmCard() {
   }, []);
 
   async function enableNotifications() {
+    // First gesture: prime the AudioContext so the first beep after install
+    // isn't silent on Safari/iOS (and on Chrome Android, where context.resume()
+    // also needs a user gesture).
+    unlockAudio();
     const next = await requestAlarmPermission();
     setPermission(next);
   }
 
   if (!hydrated) {
-    return <div className="neu-card-soft h-[180px] animate-pulse" />;
+    return (
+      <div className="neu-card-soft h-[180px] grid place-items-center text-ink-faint text-[14px]" role="status" aria-live="polite">
+        Loading alarms…
+      </div>
+    );
   }
 
   return (
     <motion.section
       whileTap={{ scale: 0.99 }}
-      className="neu-card-soft p-5"
+      whileHover={hasHover ? { y: -1 } : undefined}
+      className="neu-card-soft card-pressable p-5"
     >
       <div className="flex items-center justify-between mb-3">
         <h2 className="font-bold text-ink">Alarms</h2>
@@ -61,7 +72,7 @@ export function AlarmCard() {
         {alarms.map((a) => (
           <li
             key={a.id}
-            className="flex items-center justify-between py-2.5 border-t border-ink/[0.06] first:border-t-0"
+            className="flex items-center justify-between py-3 border-t border-ink/[0.06] first:border-t-0 touch-row"
           >
             <div className="min-w-0">
               <p className="font-bold text-ink text-[16px] tabular-nums">{a.time}</p>
@@ -102,6 +113,7 @@ export function AlarmCard() {
       <form
         onSubmit={(e) => {
           e.preventDefault();
+          unlockAudio(); // first user gesture also primes AudioContext
           addAlarm(time, label);
           setLabel("");
         }}

@@ -7,30 +7,49 @@ import { useEffect, useRef } from "react";
  * fires onRefresh() once the user pulls past THRESHOLD and releases.
  * Avoids fighting native overscroll on iOS by keeping the gesture subtle.
  *
+ * Scoped to a target element (defaults to <main>) so scrolling inside
+ * nested scroll regions (settings sheet, assistant chat) doesn't trigger
+ * a page refresh.
+ *
  * Debounced: a second pull can't fire while a refresh is in flight.
  */
-export function usePullToRefresh(onRefresh: () => void) {
+export function usePullToRefresh(
+  onRefresh: () => void,
+  target?: HTMLElement | null,
+) {
   const startY = useRef<number | null>(null);
   const triggered = useRef(false);
   const inFlight = useRef(false);
+  const pulledPx = useRef(0);
 
   useEffect(() => {
-    let detached = false;
+    if (typeof window === "undefined") return;
+    const el: HTMLElement | Window =
+      target ?? document.querySelector("main") ?? window;
 
-    function onTouchStart(e: TouchEvent) {
-      if (window.scrollY > 0 || inFlight.current) {
+    const getScrollTop = (): number => {
+      if (el === window) return window.scrollY;
+      return (el as HTMLElement).scrollTop;
+    };
+
+    function onTouchStart(e: Event) {
+      const te = e as TouchEvent;
+      if (getScrollTop() > 0 || inFlight.current) {
         startY.current = null;
         return;
       }
-      startY.current = e.touches[0]?.clientY ?? null;
+      startY.current = te.touches[0]?.clientY ?? null;
       triggered.current = false;
+      pulledPx.current = 0;
     }
 
-    function onTouchMove(e: TouchEvent) {
+    function onTouchMove(e: Event) {
+      const te = e as TouchEvent;
       if (startY.current == null || triggered.current || inFlight.current) return;
-      const y = e.touches[0]?.clientY ?? 0;
+      const y = te.touches[0]?.clientY ?? 0;
       const dy = y - startY.current;
-      if (window.scrollY === 0 && dy > 90) {
+      pulledPx.current = Math.max(0, dy);
+      if (getScrollTop() === 0 && dy > 90) {
         triggered.current = true;
         inFlight.current = true;
         onRefresh();
@@ -45,19 +64,20 @@ export function usePullToRefresh(onRefresh: () => void) {
 
     function onTouchEnd() {
       startY.current = null;
+      pulledPx.current = 0;
     }
 
-    if (!detached) {
-      window.addEventListener("touchstart", onTouchStart, { passive: true });
-      window.addEventListener("touchmove", onTouchMove, { passive: true });
-      window.addEventListener("touchend", onTouchEnd, { passive: true });
-    }
+    el.addEventListener("touchstart", onTouchStart as EventListener, { passive: true });
+    el.addEventListener("touchmove", onTouchMove as EventListener, { passive: true });
+    el.addEventListener("touchend", onTouchEnd as EventListener, { passive: true });
 
     return () => {
-      detached = true;
-      window.removeEventListener("touchstart", onTouchStart);
-      window.removeEventListener("touchmove", onTouchMove);
-      window.removeEventListener("touchend", onTouchEnd);
+      el.removeEventListener("touchstart", onTouchStart as EventListener);
+      el.removeEventListener("touchmove", onTouchMove as EventListener);
+      el.removeEventListener("touchend", onTouchEnd as EventListener);
     };
-  }, [onRefresh]);
+  }, [onRefresh, target]);
+
+  /** Live pull distance in px for a visual indicator (0 when not pulling). */
+  return { getPulledPx: () => pulledPx.current };
 }

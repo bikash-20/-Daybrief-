@@ -7,6 +7,7 @@ import { ChatInput } from "@/components/assistant/ChatInput";
 import { ChatMessage, type ChatBubble } from "@/components/assistant/ChatMessage";
 import { StarterChips } from "@/components/assistant/StarterChips";
 import { loadAssistantContext, type DaybriefContext } from "@/lib/assistant/context";
+import { useVisualViewport } from "@/lib/useVisualViewport";
 
 const HISTORY_KEY = "daybrief:assistant-history";
 const MAX_HISTORY_MESSAGES = 30;
@@ -48,6 +49,9 @@ export default function AssistantPage() {
   const [sending, setSending] = useState(false);
   const [hydrated, setHydrated] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
+  const inputBarRef = useRef<HTMLDivElement>(null);
+  const [inputBarHeight, setInputBarHeight] = useState(76); // gradient + input
+  const { keyboardHeight } = useVisualViewport();
 
   useEffect(() => {
     setMessages(loadHistory());
@@ -60,6 +64,19 @@ export default function AssistantPage() {
   useEffect(() => {
     if (hydrated) saveHistory(messages);
   }, [messages, hydrated]);
+
+  // Track the input bar's measured height so the scroll region can pad to it.
+  // ResizeObserver keeps us honest when the textarea grows multi-line.
+  useEffect(() => {
+    const el = inputBarRef.current;
+    if (!el || typeof ResizeObserver === "undefined") return;
+    const ro = new ResizeObserver(() => {
+      setInputBarHeight(el.offsetHeight);
+    });
+    ro.observe(el);
+    setInputBarHeight(el.offsetHeight);
+    return () => ro.disconnect();
+  }, []);
 
   // Auto-scroll to bottom when messages change.
   useEffect(() => {
@@ -133,12 +150,16 @@ export default function AssistantPage() {
   const empty = messages.length === 0;
 
   return (
-    <main className="mx-auto w-full max-w-2xl lg:max-w-3xl min-h-[100dvh] flex flex-col px-4 sm:px-6 lg:px-8 pb-32 pt-[env(safe-area-inset-top)]">
+    <main
+      className="mx-auto w-full max-w-2xl lg:max-w-3xl flex flex-col px-4 sm:px-6 lg:px-8 pt-[env(safe-area-inset-top)]"
+      style={{ height: "100dvh" }}
+    >
       <AssistantHeader />
 
       <div
         ref={scrollRef}
-        className="flex-1 overflow-y-auto mt-2 space-y-3"
+        className="flex-1 overflow-y-auto mt-2 space-y-3 overscroll-contain"
+        style={{ paddingBottom: inputBarHeight }}
         aria-live="polite"
       >
         {empty ? (
@@ -178,7 +199,25 @@ export default function AssistantPage() {
         )}
       </div>
 
-      <div className="fixed inset-x-0 bottom-0 z-40 px-4 sm:px-6 lg:px-8 pb-4 pt-3 bg-gradient-to-t from-bg via-bg/95 to-transparent pb-[calc(1rem+env(safe-area-inset-bottom))]">
+      {/*
+        The input bar is fixed at the bottom of the viewport and rides
+        above the on-screen keyboard by `keyboardHeight` px. When the
+        keyboard is closed, the safe-area-inset-bottom takes over.
+
+        We use a transform (not bottom:) so the bar's gradient + children
+        animate together without a layout shift on the page. The gradient
+        is fixed-height (~80px) so multi-line textarea growth doesn't
+        shove it off-screen.
+      */}
+      <div
+        ref={inputBarRef}
+        className="fixed inset-x-0 z-40 px-4 sm:px-6 lg:px-8 pt-3 pb-4 bg-gradient-to-t from-bg via-bg/95 to-transparent"
+        style={{
+          paddingBottom: "calc(1rem + env(safe-area-inset-bottom))",
+          transform: keyboardHeight > 0 ? `translateY(-${keyboardHeight}px)` : undefined,
+          transition: "transform 120ms ease-out",
+        }}
+      >
         <div className="mx-auto w-full max-w-2xl lg:max-w-3xl">
           <ChatInput onSend={send} disabled={sending} placeholder="Ask Bikash…" />
         </div>
