@@ -142,7 +142,7 @@ function MonthGrid({ today }: { today: Date }) {
                 isToday
                   ? {
                       background: "linear-gradient(135deg, var(--accent-1) 0%, var(--accent-3) 100%)",
-                      boxShadow: "0 4px 10px rgba(210, 125, 106, 0.35)",
+                      boxShadow: "0 6px 16px var(--accent-shadow)",
                     }
                   : undefined
               }

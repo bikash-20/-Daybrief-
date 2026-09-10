@@ -9,7 +9,7 @@ export const metadata: Metadata = {
   appleWebApp: {
     capable: true,
     title: "Daybrief",
-    statusBarStyle: "black-translucent",
+    statusBarStyle: "default",
   },
   icons: {
     icon: [
@@ -36,7 +36,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#274FC2",
+  themeColor: "#ECE9E3",
   width: "device-width",
   initialScale: 1,
   viewportFit: "cover",
@@ -49,7 +49,7 @@ export default function RootLayout({
     <html lang="en">
       <head>
         {/* Windows pinned-tile background color */}
-        <meta name="msapplication-TileColor" content="#274FC2" />
+        <meta name="msapplication-TileColor" content="#ECE9E3" />
       </head>
       <body className="antialiased">{children}</body>
     </html>

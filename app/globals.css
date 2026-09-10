@@ -6,16 +6,17 @@
   /* Soft, warm, tactile "clay" palette. */
   --bg: #ECE9E3;
   --bg-2: #E5E1D8;
-  --card: #E9E5DE;
-  --sunken: #DCD7CD;
-  --text: #3A332B;
-  --text-soft: #7C7163;
+  --card: #F4F0E9;
+  --sunken: #D8D2C6;
+  --text: #2E2820;
+  --text-soft: #756A5C;
   --text-faint: #A89C8C;
   --accent-1: #F8B4A0;
-  --accent-2: #E89B85;
-  --accent-3: #D27D6A;
-  --shadow-light: rgba(255, 255, 255, 0.85);
-  --shadow-dark: rgba(120, 100, 80, 0.18);
+  --accent-2: #ED9A82;
+  --accent-3: #D8755F;
+  --accent-shadow: rgba(216, 117, 95, 0.45);
+  --shadow-light: rgba(255, 255, 255, 0.95);
+  --shadow-dark: rgba(110, 90, 70, 0.28);
   --divider: rgba(58, 51, 43, 0.08);
 }
 
@@ -43,36 +44,36 @@ body {
     background: var(--card);
     border-radius: 28px;
     box-shadow:
-      -8px -8px 20px var(--shadow-light),
-      10px 10px 24px var(--shadow-dark);
+      -12px -12px 28px var(--shadow-light),
+      14px 14px 32px var(--shadow-dark);
   }
   .neu-sunken {
     background: var(--sunken);
     border-radius: 24px;
     box-shadow:
-      inset 5px 5px 12px var(--shadow-dark),
-      inset -5px -5px 12px var(--shadow-light);
+      inset 7px 7px 16px var(--shadow-dark),
+      inset -7px -7px 16px var(--shadow-light);
   }
   .neu-pill {
     background: var(--card);
     border-radius: 999px;
     box-shadow:
-      -4px -4px 10px var(--shadow-light),
-      5px 5px 12px var(--shadow-dark);
+      -6px -6px 14px var(--shadow-light),
+      7px 7px 16px var(--shadow-dark);
   }
   .neu-pill-sunken {
     background: var(--sunken);
     border-radius: 999px;
     box-shadow:
-      inset 3px 3px 7px var(--shadow-dark),
-      inset -3px -3px 7px var(--shadow-light);
+      inset 4px 4px 9px var(--shadow-dark),
+      inset -4px -4px 9px var(--shadow-light);
   }
   .neu-card-soft {
     background: var(--card);
     border-radius: 24px;
     box-shadow:
-      -5px -5px 14px var(--shadow-light),
-      6px 6px 16px var(--shadow-dark);
+      -8px -8px 20px var(--shadow-light),
+      9px 9px 22px var(--shadow-dark);
   }
 }
 
