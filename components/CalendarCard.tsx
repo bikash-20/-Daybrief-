@@ -68,7 +68,7 @@ export function CalendarCard() {
     return (
       <motion.section whileTap={{ scale: 0.99 }} className="neu-card-soft p-5">
         <p className="text-[14px] text-ink mb-1">No calendar configured.</p>
-        <p className="text-[12px] text-ink-soft">
+        <p className="text-[13px] text-ink-soft">
           Add your calendar link from <span className="font-semibold text-ink">Settings</span> (gear icon).
         </p>
       </motion.section>
@@ -84,7 +84,7 @@ export function CalendarCard() {
         <h2 className="font-bold text-ink">
           {now.toLocaleDateString(undefined, { month: "long", year: "numeric" })}
         </h2>
-        <span className="text-[10px] uppercase tracking-wider text-ink-faint font-semibold">
+        <span className="text-[11px] uppercase tracking-wider text-ink-faint font-semibold">
           {data.source === "user" ? "Your calendar" : "Default"}
         </span>
       </div>
@@ -92,20 +92,20 @@ export function CalendarCard() {
       <MonthGrid today={now} />
 
       <div className="mt-5">
-        <div className="text-[10px] uppercase tracking-[0.18em] text-ink-faint font-semibold mb-2">
+        <div className="text-[11px] uppercase tracking-[0.18em] text-ink-faint font-semibold mb-2">
           Next 48 hours
         </div>
         {data.events.length === 0 ? (
-          <p className="text-[13px] text-ink-soft">Nothing scheduled.</p>
+          <p className="text-[14px] text-ink-soft">Nothing scheduled.</p>
         ) : (
           <ul className="space-y-2">
             {data.events.slice(0, 3).map((e, i) => (
               <li
                 key={`${e.start}-${i}`}
-                className="flex items-center justify-between gap-3 text-[13px]"
+                className="flex items-center justify-between gap-3 text-[14px]"
               >
                 <span className="truncate text-ink font-medium">{e.title}</span>
-                <span className="shrink-0 text-ink-soft text-[12px] tabular-nums">
+                <span className="shrink-0 text-ink-soft text-[13px] tabular-nums">
                   {new Date(e.start).toLocaleString(undefined, {
                     weekday: "short",
                     hour: "numeric",
@@ -136,7 +136,7 @@ function MonthGrid({ today }: { today: Date }) {
   const weekdays = ["S", "M", "T", "W", "T", "F", "S"];
   return (
     <div>
-      <div className="grid grid-cols-7 gap-1 text-[11px] text-ink-faint text-center mb-2 font-semibold">
+      <div className="grid grid-cols-7 gap-1 text-[12px] text-ink-faint text-center mb-2 font-semibold">
         {weekdays.map((d, i) => (
           <div key={i}>{d}</div>
         ))}
@@ -148,7 +148,7 @@ function MonthGrid({ today }: { today: Date }) {
           return (
             <div
               key={i}
-              className={`aspect-square grid place-items-center text-[13px] rounded-full font-semibold ${
+              className={`aspect-square grid place-items-center text-[14px] rounded-full font-semibold ${
                 isToday
                   ? "text-white"
                   : "text-ink"

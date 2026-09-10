@@ -52,7 +52,7 @@ export function CitySection() {
           <button
             onClick={save}
             disabled={status === "saving"}
-            className="shrink-0 neu-pill px-4 py-2.5 text-[12px] font-semibold text-ink disabled:opacity-50"
+            className="shrink-0 neu-pill px-4 py-2.5 text-[13px] font-semibold text-ink disabled:opacity-50"
           >
             {status === "saving"
               ? "…"

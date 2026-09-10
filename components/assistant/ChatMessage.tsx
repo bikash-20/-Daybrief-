@@ -7,7 +7,7 @@ const Markdown = dynamic(
   () => import("@/components/markdown/Markdown").then((m) => m.Markdown),
   {
     ssr: false,
-    loading: () => <div className="text-ink-faint text-[13px]">…</div>,
+    loading: () => <div className="text-ink-faint text-[14px]">…</div>,
   },
 );
 
@@ -62,7 +62,7 @@ export function ChatMessage({ msg }: { msg: ChatBubble }) {
         transition={{ duration: 0.25 }}
         className="flex justify-start"
       >
-        <div className="max-w-[85%] sm:max-w-[75%] neu-card-soft p-3 text-[13px] text-ink-soft">
+        <div className="max-w-[85%] sm:max-w-[75%] neu-card-soft p-3 text-[14px] text-ink-soft">
           {msg.content}
         </div>
       </motion.div>
@@ -81,7 +81,7 @@ export function ChatMessage({ msg }: { msg: ChatBubble }) {
           <Markdown content={msg.content} />
         </div>
         {msg.modelUsed && (
-          <div className="mt-1 ml-3 text-[10px] text-ink-faint uppercase tracking-[0.16em] font-semibold">
+          <div className="mt-1 ml-3 text-[11px] text-ink-faint uppercase tracking-[0.16em] font-semibold">
             {shortModelName(msg.modelUsed)} · tier {msg.tier ?? "?"}
           </div>
         )}

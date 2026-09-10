@@ -20,13 +20,13 @@ export function Header({ name, onRefresh, loading }: Props) {
   return (
     <header className="px-6 pt-8 pb-3 flex items-start justify-between gap-3">
       <div>
-        <div className="text-[11px] tracking-[0.22em] text-ink-faint font-semibold uppercase">
+        <div className="text-[12px] tracking-[0.22em] text-ink-faint font-semibold uppercase">
           {day}
         </div>
         <h1 className="mt-1 text-[28px] font-bold leading-tight text-ink">
           {now ? greeting(name, now.getHours()) : "Daybrief"}
         </h1>
-        <div className="mt-0.5 text-[13px] text-ink-soft font-medium">{full}</div>
+        <div className="mt-0.5 text-[14px] text-ink-soft font-medium">{full}</div>
       </div>
       <div className="mt-1 flex items-center gap-2">
         <motion.button

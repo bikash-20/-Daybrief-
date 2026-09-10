@@ -24,7 +24,7 @@ export function StarterChips({ onPick }: { onPick: (prompt: string) => void }) {
           whileTap={{ scale: 0.97 }}
           whileHover={{ y: -1 }}
           transition={{ type: "spring", stiffness: 400, damping: 28 }}
-          className="neu-pill px-4 py-2 text-[12px] text-ink-soft hover:text-ink text-left"
+          className="neu-pill px-4 py-2 text-[13px] text-ink-soft hover:text-ink text-left"
         >
           {s}
         </motion.button>

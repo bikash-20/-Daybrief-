@@ -15,9 +15,9 @@ type Props = {
 export function SettingsSection({ title, description, children }: Props) {
   return (
     <section className="space-y-2">
-      <div className="text-[12px] font-semibold text-ink">{title}</div>
+      <div className="text-[13px] font-semibold text-ink">{title}</div>
       {description && (
-        <div className="text-[11px] text-ink-soft">{description}</div>
+        <div className="text-[12px] text-ink-soft">{description}</div>
       )}
       {children}
     </section>
