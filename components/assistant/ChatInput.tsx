@@ -59,7 +59,7 @@ export function ChatInput({ onSend, disabled, placeholder }: Props) {
         rows={1}
         disabled={disabled}
         placeholder={placeholder ?? "Ask Bikash…"}
-        className="flex-1 neu-sunken px-4 py-3 text-[14px] text-ink placeholder:text-ink-faint focus:outline-none resize-none leading-snug"
+        className="flex-1 neu-sunken px-4 py-3 text-[16px] sm:text-[14px] text-ink placeholder:text-ink-faint focus:outline-none resize-none leading-snug"
       />
       <motion.button
         type="submit"

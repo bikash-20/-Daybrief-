@@ -133,7 +133,7 @@ export default function AssistantPage() {
   const empty = messages.length === 0;
 
   return (
-    <main className="mx-auto w-full max-w-2xl lg:max-w-3xl min-h-[100dvh] flex flex-col px-4 sm:px-6 lg:px-8 pb-32">
+    <main className="mx-auto w-full max-w-2xl lg:max-w-3xl min-h-[100dvh] flex flex-col px-4 sm:px-6 lg:px-8 pb-32 pt-[env(safe-area-inset-top)]">
       <AssistantHeader />
 
       <div
@@ -178,7 +178,7 @@ export default function AssistantPage() {
         )}
       </div>
 
-      <div className="fixed inset-x-0 bottom-0 z-40 px-4 sm:px-6 lg:px-8 pb-4 pt-3 bg-gradient-to-t from-bg via-bg/95 to-transparent">
+      <div className="fixed inset-x-0 bottom-0 z-40 px-4 sm:px-6 lg:px-8 pb-4 pt-3 bg-gradient-to-t from-bg via-bg/95 to-transparent pb-[calc(1rem+env(safe-area-inset-bottom))]">
         <div className="mx-auto w-full max-w-2xl lg:max-w-3xl">
           <ChatInput onSend={send} disabled={sending} placeholder="Ask Bikash…" />
         </div>

@@ -111,13 +111,13 @@ export function AlarmCard() {
           type="time"
           value={time}
           onChange={(e) => setTime(e.target.value)}
-          className="neu-sunken px-3 py-2 text-[14px] text-ink focus:outline-none tabular-nums"
+          className="neu-sunken px-3 py-2 text-[16px] sm:text-[14px] text-ink focus:outline-none tabular-nums"
         />
         <input
           value={label}
           onChange={(e) => setLabel(e.target.value)}
           placeholder="Label (optional)"
-          className="flex-1 neu-sunken px-3 py-2 text-[14px] text-ink placeholder:text-ink-faint focus:outline-none"
+          className="flex-1 neu-sunken px-3 py-2 text-[16px] sm:text-[14px] text-ink placeholder:text-ink-faint focus:outline-none"
         />
         <button
           type="submit"

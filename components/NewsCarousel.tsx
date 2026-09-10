@@ -94,7 +94,7 @@ function NewsList({
           </h2>
         </div>
       )}
-      <div className="no-scrollbar flex gap-3 overflow-x-auto snap-x snap-mandatory pb-2 -mx-5 px-5 sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
+      <div className="no-scrollbar flex gap-3 overflow-x-auto snap-x snap-mandatory pb-2 -mx-5 px-5 sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8 [mask-image:linear-gradient(to_right,transparent,black_1rem,black_calc(100%-1rem),transparent)]">
         {items.map((item, i) => (
           <motion.a
             key={`${item.link}-${i}`}

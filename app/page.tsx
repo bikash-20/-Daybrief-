@@ -30,7 +30,7 @@ export default function Home() {
 
   return (
     <>
-      <main className="mx-auto w-full max-w-md lg:max-w-2xl xl:max-w-3xl px-5 sm:px-6 lg:px-8 pb-32 pt-2">
+      <main className="mx-auto w-full max-w-md lg:max-w-2xl xl:max-w-3xl px-5 sm:px-6 lg:px-8 pb-32 pt-2 pt-[calc(0.5rem+env(safe-area-inset-top))]">
         <Header name={name} onRefresh={refresh} loading={refreshing} />
 
         <motion.div
@@ -67,7 +67,7 @@ function BottomActions({
   onInstall: () => Promise<boolean>;
 }) {
   return (
-    <div className="fixed bottom-4 right-4 z-40 flex flex-col items-end gap-3 sm:bottom-6 sm:right-6">
+    <div className="fixed bottom-4 right-4 z-40 flex flex-col items-end gap-3 sm:bottom-6 sm:right-6 pb-[env(safe-area-inset-bottom)]">
       {canInstall && (
         <motion.button
           whileTap={{ scale: 0.96 }}
