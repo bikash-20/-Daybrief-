@@ -30,7 +30,7 @@ export async function GET(req: NextRequest) {
     `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}` +
     `&current=temperature_2m,weather_code` +
     `&daily=temperature_2m_max,temperature_2m_min` +
-    `&temperature_unit=fahrenheit&timezone=auto`;
+    `&timezone=auto`;
 
   const upstream = await fetch(url, {
     next: { revalidate: 600 },
