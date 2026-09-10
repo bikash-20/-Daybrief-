@@ -37,7 +37,7 @@ export function WeatherCard() {
 
   if (location.status === "loading") {
     return (
-      <div className="flex gap-3">
+      <div className="flex flex-col sm:flex-row gap-3">
         <div className="neu-pill h-[100px] w-[100px] animate-pulse" />
         <div className="neu-card-soft flex-1 h-[100px] animate-pulse" />
       </div>
@@ -61,7 +61,7 @@ export function WeatherCard() {
 
   if (!weather) {
     return (
-      <div className="flex gap-3">
+      <div className="flex flex-col sm:flex-row gap-3">
         <AnalogClock size={100} />
         <div className="neu-card-soft flex-1 h-[100px] grid place-items-center text-ink-soft text-sm">
           Fetching forecast for {location.label}…
@@ -71,7 +71,7 @@ export function WeatherCard() {
   }
 
   return (
-    <div className="flex gap-3 items-stretch">
+    <div className="flex flex-col sm:flex-row gap-3 items-stretch">
       <motion.div
         whileTap={{ scale: 0.97 }}
         className="shrink-0"

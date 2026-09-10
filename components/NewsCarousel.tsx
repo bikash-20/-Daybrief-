@@ -94,7 +94,7 @@ function NewsList({
           </h2>
         </div>
       )}
-      <div className="no-scrollbar flex gap-3 overflow-x-auto snap-x snap-mandatory pb-2 -mx-5 px-5">
+      <div className="no-scrollbar flex gap-3 overflow-x-auto snap-x snap-mandatory pb-2 -mx-5 px-5 sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
         {items.map((item, i) => (
           <motion.a
             key={`${item.link}-${i}`}
@@ -104,7 +104,7 @@ function NewsList({
             whileHover={{ y: -2 }}
             whileTap={{ scale: 0.98 }}
             transition={{ type: "spring", stiffness: 400, damping: 28 }}
-            className="snap-start shrink-0 w-[78%] sm:w-[60%] neu-card-soft p-4 cursor-pointer"
+            className="snap-start shrink-0 w-[88%] sm:w-[55%] lg:w-[40%] neu-card-soft p-4 cursor-pointer"
           >
             <div className="text-[10px] uppercase tracking-[0.18em] text-ink-faint font-semibold">
               {item.source}
