@@ -1,4 +1,5 @@
 import type { NewsItem, NewsResponse } from "@/app/api/news/route";
+import { STORAGE_KEYS } from "@/lib/storageKeys";
 
 export type CalEvent = { title: string; start: string; end: string };
 export type CalSnapshot = {
@@ -38,9 +39,9 @@ export type ChatContextPayload =
   | { kind: "user"; data: { name: string; location: LocationSnapshot | null } }
   | { kind: "generatedAt"; data: string };
 
-export const ALARMS_STORAGE_KEY = "daybrief:alarms";
-export const NAME_STORAGE_KEY = "daybrief:name";
-export const MANUAL_LOCATION_KEY = "daybrief:manual-location";
+export const ALARMS_STORAGE_KEY = STORAGE_KEYS.alarms;
+export const NAME_STORAGE_KEY = STORAGE_KEYS.name;
+export const MANUAL_LOCATION_KEY = STORAGE_KEYS.manualLocation;
 
 /**
  * Read the raw pieces the assistant needs directly from localStorage.
@@ -106,7 +107,7 @@ async function fetchWeather(): Promise<WeatherSnapshot | null> {
 
 async function fetchCalendar(): Promise<CalSnapshot | null> {
   try {
-    const userUrl = localStorage.getItem("daybrief:calendar-url");
+    const userUrl = localStorage.getItem(STORAGE_KEYS.calendarUrl);
     const endpoint = userUrl
       ? `/api/calendar?url=${encodeURIComponent(userUrl)}`
       : "/api/calendar";

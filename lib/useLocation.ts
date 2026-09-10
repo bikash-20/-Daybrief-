@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import { STORAGE_KEYS } from "./storageKeys";
 
 export type LocationState =
   | { status: "loading" }
@@ -8,7 +9,7 @@ export type LocationState =
   | { status: "unavailable" }
   | { status: "ready"; lat: number; lon: number; label: string; source: "geo" | "manual" };
 
-const STORAGE_KEY = "daybrief:manual-location";
+const STORAGE_KEY = STORAGE_KEYS.manualLocation;
 
 /**
  * Resolves the user's location in this order:

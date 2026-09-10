@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 
 /**
  * Mobile-friendly "back" affordance. When `active` is true, pushes a sentinel
@@ -12,25 +12,39 @@ import { useEffect } from "react";
  * Pattern: when the modal opens, we pushState a no-op entry. When the user
  * hits back, the browser fires `popstate`, we run `onBack`, and we replace
  * the sentinel with the real page so the next back actually navigates.
+ *
+ * Race-safety: an instanceId is generated per activation. popstate events
+ * that don't match the active instance are ignored. This prevents a rapid
+ * active→inactive→active cycle from leaving the wrong sentinel on the stack
+ * or closing the wrong modal.
  */
 export function useBackHandler(active: boolean, onBack: () => void) {
+  const instanceRef = useRef<number>(0);
+
   useEffect(() => {
     if (!active) return;
     const SENTINEL = "__daybrief_back_sentinel__";
-    window.history.pushState({ [SENTINEL]: true }, "");
+    const myInstance = ++instanceRef.current;
+    window.history.pushState({ [SENTINEL]: true, i: myInstance }, "");
 
     function onPop(e: PopStateEvent) {
-      // If the popped state isn't ours, the user is leaving the page — let it.
+      // The sentinel always pops first; the second pop is what triggers onBack.
+      // We just need to make sure we only run onBack once for our instance.
       if (e.state && typeof e.state === "object" && SENTINEL in e.state) return;
+      if (instanceRef.current !== myInstance) return;
       onBack();
     }
+
     window.addEventListener("popstate", onPop);
+
     return () => {
       window.removeEventListener("popstate", onPop);
-      // When closing via UI (X button, etc.), the sentinel is still on the
-      // stack. Replace it with `null` so the real previous entry is restored
-      // — otherwise the next back press would do nothing useful.
-      if (window.history.state && SENTINEL in (window.history.state as object)) {
+      // Only clear the sentinel if we're still the active instance.
+      // If a new mount has already taken over (rapid reopen), don't undo it.
+      if (instanceRef.current !== myInstance) return;
+      instanceRef.current = 0;
+      const state = window.history.state as Record<string, unknown> | null;
+      if (state && typeof state === "object" && SENTINEL in state) {
         window.history.back();
       }
     };

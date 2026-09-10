@@ -2,8 +2,9 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { DEFAULT_THEME, isThemeId, type ThemeId } from "./themes";
+import { STORAGE_KEYS } from "./storageKeys";
 
-export const THEME_STORAGE_KEY = "daybrief:theme";
+export const THEME_STORAGE_KEY = STORAGE_KEYS.theme;
 export const THEME_CHANGE_EVENT = "daybrief:theme-change";
 
 function applyTheme(id: ThemeId) {

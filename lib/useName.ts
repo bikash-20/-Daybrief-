@@ -1,8 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { STORAGE_KEYS } from "./storageKeys";
 
-const NAME_KEY = "daybrief:name";
+const NAME_KEY = STORAGE_KEYS.name;
 
 export const NAME_STORAGE_KEY = NAME_KEY;
 

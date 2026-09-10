@@ -266,7 +266,86 @@ body {
     padding: 0 !important;
     font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
   }
+  /* Lazy CodeBlock surfaces — keep the same look as inline pre, but with
+     the highlighter's tokens visible. The .is-light/.is-dark classes flip
+     a CSS-variable layer to recolor when the theme changes — no JS work. */
+  .md-code {
+    background: var(--sunken);
+    color: var(--text);
+    border-radius: 14px;
+    padding: 0.8rem 0.9rem;
+    overflow-x: auto;
+    font-size: 12.5px;
+    line-height: 1.5;
+    border: 1px solid var(--divider);
+    margin: 0;
+  }
+  .md-code--hl pre, .md-code--hl code { background: transparent !important; }
 }
+
+/* ============================================================
+   Prism token recoloring — runs on top of `prism.css` so we get
+   Prism's token classification but keep the active theme's text
+   colors. `is-light` is only set on Pink Rose; every other theme
+   uses `is-dark`.
+   ============================================================ */
+.md-code.is-dark {
+  --tk-base: #E6D8DA;
+  --tk-comment: #8A7A85;
+  --tk-keyword: #E89B85;
+  --tk-string: #B6ACE8;
+  --tk-number: #FFD8B5;
+  --tk-function: #F8B4A0;
+  --tk-class: #7BC4D4;
+  --tk-tag: #E89B85;
+  --tk-attr: #FFD8B5;
+  --tk-punct: #C9B3BC;
+  --tk-deleted: #E26A4A;
+  --tk-inserted: #B6ACE8;
+}
+.md-code.is-light {
+  --tk-base: #2A2225;
+  --tk-comment: #8A6F75;
+  --tk-keyword: #C77F8B;
+  --tk-string: #7466D4;
+  --tk-number: #B8654D;
+  --tk-function: #D08C97;
+  --tk-class: #5AAEC0;
+  --tk-tag: #C77F8B;
+  --tk-attr: #B8654D;
+  --tk-punct: #6E5460;
+  --tk-deleted: #E26A4A;
+  --tk-inserted: #7466D4;
+}
+/* Prism class → our CSS variable. We override Prism's defaults so the
+   block always matches the active theme (no flash on theme swap). */
+.md-code .token.comment, .md-code .token.prolog, .md-code .token.doctype,
+.md-code .token.cdata { color: var(--tk-comment); font-style: italic; }
+.md-code .token.punctuation { color: var(--tk-punct); }
+.md-code .token.property,
+.md-code .token.tag,
+.md-code .token.boolean,
+.md-code .token.number,
+.md-code .token.constant,
+.md-code .token.symbol { color: var(--tk-number); }
+.md-code .token.selector,
+.md-code .token.attr-name,
+.md-code .token.string,
+.md-code .token.char,
+.md-code .token.builtin { color: var(--tk-string); }
+.md-code .token.operator,
+.md-code .token.entity,
+.md-code .token.url,
+.md-code .token.variable { color: var(--tk-base); }
+.md-code .token.atrule,
+.md-code .token.attr-value,
+.md-code .token.keyword { color: var(--tk-keyword); }
+.md-code .token.function,
+.md-code .token.class-name { color: var(--tk-function); font-weight: 600; }
+.md-code .token.regex,
+.md-code .token.important { color: var(--tk-class); }
+.md-code .token.deleted { color: var(--tk-deleted); }
+.md-code .token.inserted { color: var(--tk-inserted); }
 
 /* KaTeX font + theme-aware color */
 .katex { color: var(--text); font-size: 1em; }
@@ -276,5 +355,17 @@ body {
    ============================================================ */
 .no-scrollbar::-webkit-scrollbar { display: none; }
 .no-scrollbar { scrollbar-width: none; -ms-overflow-style: none; }
+
+/* CSS-only second hand sweep — no JS per frame.
+   Origin set in the SVG via class for cross-browser compatibility. */
+.clock-second-hand {
+  transform-origin: 50% 50%;
+  transform-box: fill-box;
+  animation: clock-sweep 60s linear infinite;
+}
+@keyframes clock-sweep {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
 
 * { -webkit-tap-highlight-color: transparent; }

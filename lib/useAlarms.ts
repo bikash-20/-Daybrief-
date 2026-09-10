@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import { STORAGE_KEYS } from "./storageKeys";
 
 export type Alarm = {
   id: string;
@@ -10,7 +11,8 @@ export type Alarm = {
   lastFiredDate?: string; // "YYYY-MM-DD", prevents re-firing within the same day
 };
 
-const STORAGE_KEY = "daybrief:alarms";
+const STORAGE_KEY = STORAGE_KEYS.alarms;
+const TICK_MS = 60_000; // one minute granularity; alarms are hh:mm only
 
 /**
  * IMPORTANT LIMITATION: this fires alarms only while the app/tab is open —
@@ -47,7 +49,10 @@ export function useAlarms() {
 
   const addAlarm = useCallback((time: string, label: string) => {
     const alarm: Alarm = {
-      id: crypto.randomUUID(),
+      id:
+        typeof crypto !== "undefined" && "randomUUID" in crypto
+          ? crypto.randomUUID()
+          : Math.random().toString(36).slice(2),
       time,
       label: label.trim(),
       enabled: true,
@@ -63,9 +68,14 @@ export function useAlarms() {
     setAlarms((prev) => prev.filter((a) => a.id !== id));
   }, []);
 
-  // Poll every 15s for matching, not-yet-fired-today alarms.
+  // Poll every minute. Skips work entirely when no alarms are enabled,
+  // and only updates state when an alarm actually fires (preserves React
+  // memoization, reduces mobile GC pressure).
   useEffect(() => {
+    const hasEnabled = () => alarmsRef.current.some((a) => a.enabled);
+
     const tick = () => {
+      if (!hasEnabled()) return; // nothing to do
       const now = new Date();
       const hhmm = `${String(now.getHours()).padStart(2, "0")}:${String(now.getMinutes()).padStart(2, "0")}`;
       const today = now.toISOString().slice(0, 10);
@@ -80,11 +90,45 @@ export function useAlarms() {
       });
       if (changed) setAlarms(next);
     };
-    const interval = window.setInterval(tick, 15_000);
-    return () => window.clearInterval(interval);
+
+    // First tick is offset to the next minute boundary to keep the hh:mm
+    // comparison honest (a 0s tick would fire too early).
+    const offset = 60_000 - (Date.now() % 60_000);
+    const initial = window.setTimeout(() => {
+      tick();
+      const interval = window.setInterval(tick, TICK_MS);
+      // Stash the interval id on the timeout so the cleanup function can
+      // clear both. (Closures over the same id make this safe.)
+      cleanupRef.current = () => {
+        window.clearInterval(interval);
+      };
+    }, offset);
+
+    const cleanupRef = { current: () => window.clearTimeout(initial) };
+
+    return () => {
+      cleanupRef.current();
+    };
   }, []);
 
   return { alarms, addAlarm, toggleAlarm, removeAlarm, hydrated };
+}
+
+// Reused across the page so we don't spin up an AudioContext per alarm tick.
+let _audioCtx: AudioContext | null = null;
+function getAudioCtx(): AudioContext | null {
+  if (typeof window === "undefined") return null;
+  if (_audioCtx) return _audioCtx;
+  const Ctor =
+    window.AudioContext ??
+    (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
+  if (!Ctor) return null;
+  try {
+    _audioCtx = new Ctor();
+  } catch {
+    _audioCtx = null;
+  }
+  return _audioCtx;
 }
 
 function fireAlarm(alarm: Alarm) {
@@ -102,9 +146,8 @@ function fireAlarm(alarm: Alarm) {
   // AudioContext requires user gesture on first use in some browsers;
   // a failed beep silently falls back to the notification above.
   try {
-    const Ctor = window.AudioContext ?? (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
-    if (!Ctor) return;
-    const ctx = new Ctor();
+    const ctx = getAudioCtx();
+    if (!ctx) return;
     const osc = ctx.createOscillator();
     const gain = ctx.createGain();
     osc.frequency.value = 880;
@@ -113,7 +156,13 @@ function fireAlarm(alarm: Alarm) {
     osc.start();
     window.setTimeout(() => {
       osc.stop();
-      void ctx.close();
+      // Don't close the context — it's reused. Just disconnect.
+      try {
+        osc.disconnect();
+        gain.disconnect();
+      } catch {
+        /* ignore */
+      }
     }, 600);
   } catch {
     /* ignore */

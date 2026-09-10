@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { CALENDAR_URL_KEY } from "./CalendarCard.shared";
 
@@ -14,32 +14,47 @@ type CalResponse = {
 
 export function CalendarCard() {
   const [data, setData] = useState<CalResponse | null>(null);
-  const [, setRefreshing] = useState(0);
+  const [refreshTick, setRefreshTick] = useState(0);
   const [now] = useState(() => new Date());
 
+  // AbortController for the in-flight fetch; rapid refreshes cancel stale ones.
+  const ctrlRef = useRef<AbortController | null>(null);
+
   useEffect(() => {
-    let cancelled = false;
+    const ctrl = new AbortController();
+    ctrlRef.current?.abort();
+    ctrlRef.current = ctrl;
+
     const userUrl =
       typeof window !== "undefined" ? localStorage.getItem(CALENDAR_URL_KEY) : null;
     const endpoint = userUrl
       ? `/api/calendar?url=${encodeURIComponent(userUrl)}`
       : "/api/calendar";
-    fetch(endpoint)
+
+    fetch(endpoint, { signal: ctrl.signal, cache: "no-store" })
       .then((r) => r.json() as Promise<CalResponse>)
       .then((d) => {
-        if (!cancelled) setData(d);
+        if (!ctrl.signal.aborted) setData(d);
       })
-      .catch(() => {
-        if (!cancelled) setData({ configured: false, source: "none", events: [] });
+      .catch((err) => {
+        if (ctrl.signal.aborted) return;
+        // Network failure: keep whatever we previously had rather than nuking
+        // the user's calendar on a flaky connection.
+        if (!data) {
+          setData({ configured: false, source: "none", events: [] });
+        }
+        // Surface the error for debugging — silent in prod.
+        if (err instanceof Error) console.warn("[CalendarCard] fetch failed:", err.message);
       });
-    return () => {
-      cancelled = true;
-    };
-  }, []);
+
+    return () => ctrl.abort();
+    // We deliberately exclude `data` from deps: refetch on tick, then write.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [refreshTick]);
 
   useEffect(() => {
     function onRefresh() {
-      setRefreshing((n) => n + 1);
+      setRefreshTick((n) => n + 1);
     }
     window.addEventListener("daybrief:calendar-refresh", onRefresh);
     return () => window.removeEventListener("daybrief:calendar-refresh", onRefresh);

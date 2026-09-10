@@ -3,10 +3,13 @@
 import { motion } from "framer-motion";
 import dynamic from "next/dynamic";
 
-const Markdown = dynamic(() => import("@/components/Markdown").then((m) => m.Markdown), {
-  ssr: false,
-  loading: () => <div className="text-ink-faint text-[13px]">…</div>,
-});
+const Markdown = dynamic(
+  () => import("@/components/markdown/Markdown").then((m) => m.Markdown),
+  {
+    ssr: false,
+    loading: () => <div className="text-ink-faint text-[13px]">…</div>,
+  },
+);
 
 export type ChatBubble = {
   id: string;

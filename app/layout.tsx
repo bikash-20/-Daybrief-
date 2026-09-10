@@ -1,8 +1,8 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
-import "katex/dist/katex.min.css";
 import { ThemeApplier } from "@/components/ThemeApplier";
 import { DEFAULT_THEME, THEMES, getThemeBg } from "@/lib/themes";
+import { themeBootstrapScript } from "@/components/theme-init";
 
 const SITE_URL = process.env.SITE_URL || "https://daybrief.app";
 
@@ -46,53 +46,26 @@ export const viewport: Viewport = {
   viewportFit: "cover",
 };
 
+// Build the theme payload ONCE at module load. JSON.stringify handles every
+// edge case (Unicode, quotes, `</script>`) so we never have to template-interpolate
+// the user-controlled values into raw script.
+const themePayload = {
+  storageKey: "daybrief:theme",
+  defaultId: DEFAULT_THEME,
+  themes: THEMES.map((t) => ({
+    id: t.id,
+    bgHex: t.bgHex,
+    isDark: t.colorScheme === "dark",
+  })),
+};
+
 // Per-theme theme-color meta tags. Chromium 121+ uses these to drive the OS
 // chrome color (PWA title bar, address bar, splash) live, even after install.
 // Each has `media="(prefers-color-scheme: dark|light)"` so the right one
 // activates per OS theme; within each scheme the JS ThemeApplier keeps the
 // content attribute in sync with the user's selected theme.
-const THEME_HEXES = THEMES.map((t) => t.bgHex).join("|");
-const THEME_IDS_RE = THEMES.map((t) => t.id).join("|");
-
-// Inline FOUC-prevention: applies the stored theme to <html> AND syncs the
-// theme-color / msapplication-TileColor meta tags to the matching bg hex —
-// so the OS chrome color matches the app on cold load with no flash.
-const themeInitScript = `
-(function(){
-  try {
-    var k = 'daybrief:theme';
-    var ids = '${THEME_IDS_RE}'.split('|');
-    var hexes = '${THEME_HEXES}'.split('|');
-    var def = '${DEFAULT_THEME}';
-    var v = localStorage.getItem(k);
-    var i = ids.indexOf(v);
-    var id = i >= 0 ? v : def;
-    var hex = i >= 0 ? hexes[i] : hexes[ids.indexOf(def)];
-
-    document.documentElement.setAttribute('data-theme', id);
-
-    var setMeta = function(name, content) {
-      var el = document.querySelector('meta[name="' + name + '"]');
-      if (el) el.setAttribute('content', content);
-    };
-    var darkSchemes = ['mauve','sunset','ocean','midnight','chocolate-rose'];
-    var schemes = document.querySelectorAll('meta[name="theme-color"][media]');
-    schemes.forEach(function(m){
-      var isDark = m.getAttribute('media').indexOf('dark') >= 0;
-      m.setAttribute('content', darkSchemes.indexOf(id) >= 0 ? hex : (isDark ? hexes[hexes.length-1] : hex));
-    });
-    setMeta('theme-color', hex);
-    setMeta('msapplication-TileColor', hex);
-  } catch (e) {}
-})();
-`.trim();
-
-// Build the six per-theme theme-color meta tags (3 dark + 1 light Pink Rose).
-// Pink Rose ships under the light media query; the dark themes all share the
-// dark scheme, so we pick the most contrasting one per media query as the
-// static fallback. The live ThemeApplier updates these at runtime.
-const darkThemeIds = ["mauve", "sunset", "ocean", "midnight", "chocolate-rose"] as const;
-const lightThemeIds = ["pink-rose"] as const;
+const DARK_THEMES = ["mauve", "sunset", "ocean", "midnight", "chocolate-rose"] as const;
+const LIGHT_THEMES = ["pink-rose"] as const;
 
 export default function RootLayout({
   children,
@@ -101,15 +74,32 @@ export default function RootLayout({
   // the light fallback is pink-rose. Live JS overrides on hydration.
   const darkFallback = getThemeBg("midnight");
   const lightFallback = getThemeBg("pink-rose");
+  const bootstrap = themeBootstrapScript({
+    storageKey: "daybrief:theme",
+    defaultId: DEFAULT_THEME,
+    themes: THEMES.map((t) => ({
+      id: t.id,
+      bgHex: t.bgHex,
+      isDark: t.colorScheme === "dark",
+    })),
+  });
 
   return (
     <html lang="en">
       <head>
-        <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
+        {/* Payload is JSON — safely serializable, no escape risk. */}
+        <script
+          id="__daybrief_theme_payload__"
+          type="application/json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(themePayload) }}
+        />
+        {/* Bootstrap reads the payload above and applies data-theme +
+            theme-color to the matching meta tags before first paint. */}
+        <script dangerouslySetInnerHTML={{ __html: bootstrap }} />
         {/* Per-theme theme-color meta tags — Chromium 121+ uses media queries
             to pick the right one for the current OS scheme, and the live
             JS updater mutates the matching tag when the user picks a theme. */}
-        {darkThemeIds.map((id) => (
+        {DARK_THEMES.map((id) => (
           <meta
             key={`tc-d-${id}`}
             name="theme-color"
@@ -118,7 +108,7 @@ export default function RootLayout({
             data-theme-id={id}
           />
         ))}
-        {lightThemeIds.map((id) => (
+        {LIGHT_THEMES.map((id) => (
           <meta
             key={`tc-l-${id}`}
             name="theme-color"
