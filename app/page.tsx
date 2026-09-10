@@ -16,6 +16,7 @@ export default function Home() {
   const refresh = useCallback(() => {
     setRefreshing(true);
     setRefreshKey((k) => k + 1);
+    window.dispatchEvent(new Event("daybrief:calendar-refresh"));
     window.setTimeout(() => setRefreshing(false), 600);
   }, []);
 
@@ -27,7 +28,7 @@ export default function Home() {
 
       <div className="px-5 space-y-4">
         <WeatherCard />
-        <CalendarCard refreshKey={refreshKey} />
+        <CalendarCard />
         <NewsCarousel refreshKey={refreshKey} />
       </div>
 

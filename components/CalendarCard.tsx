@@ -2,127 +2,106 @@
 
 import { useEffect, useState } from "react";
 
-type CalendarEvent = {
-  title: string;
-  start: string;
-  end: string;
+type CalEvent = { title: string; start: string; end: string };
+type CalResponse = {
+  configured: boolean;
+  source: "user" | "default" | "none";
+  events: CalEvent[];
+  error?: string;
 };
 
-type CalendarResponse =
-  | { configured: false; events: [] }
-  | { configured: true; events: CalendarEvent[]; error?: string };
+export const CALENDAR_URL_KEY = "daybrief:calendar-url";
 
-type Props = { refreshKey: number };
-
-export function CalendarCard({ refreshKey }: Props) {
-  const [state, setState] = useState<
-    | { status: "loading" }
-    | { status: "missing" }
-    | { status: "empty" }
-    | { status: "ready"; events: CalendarEvent[] }
-    | { status: "error"; message: string }
-  >({ status: "loading" });
+export function CalendarCard() {
+  const [data, setData] = useState<CalResponse | null>(null);
+  const [refreshing, setRefreshing] = useState(0);
 
   useEffect(() => {
     let cancelled = false;
-    setState({ status: "loading" });
-    fetch("/api/calendar")
-      .then((r) => r.json() as Promise<CalendarResponse>)
-      .then((data) => {
-        if (cancelled) return;
-        if (!data.configured) {
-          setState({ status: "missing" });
-        } else if ("error" in data) {
-          setState({ status: "error", message: data.error ?? "Calendar error" });
-        } else if (data.events.length === 0) {
-          setState({ status: "empty" });
-        } else {
-          setState({ status: "ready", events: data.events });
-        }
+    const userUrl =
+      typeof window !== "undefined" ? localStorage.getItem(CALENDAR_URL_KEY) : null;
+    const endpoint = userUrl
+      ? `/api/calendar?url=${encodeURIComponent(userUrl)}`
+      : "/api/calendar";
+    fetch(endpoint)
+      .then((r) => r.json() as Promise<CalResponse>)
+      .then((d) => {
+        if (!cancelled) setData(d);
       })
-      .catch((err: unknown) => {
-        if (cancelled) return;
-        setState({
-          status: "error",
-          message: err instanceof Error ? err.message : "Network error",
-        });
+      .catch(() => {
+        if (!cancelled) setData({ configured: false, source: "none", events: [] });
       });
     return () => {
       cancelled = true;
     };
-  }, [refreshKey]);
+  }, [refreshing]);
 
-  if (state.status === "missing") {
+  // Subscribe to a custom event so SettingsPanel can trigger a refetch without reload.
+  useEffect(() => {
+    function onRefresh() {
+      setRefreshing((n) => n + 1);
+    }
+    window.addEventListener("daybrief:calendar-refresh", onRefresh);
+    return () => window.removeEventListener("daybrief:calendar-refresh", onRefresh);
+  }, []);
+
+  if (!data) return <Card>Loading calendar…</Card>;
+
+  if (!data.configured) {
     return (
-      <section className="rounded-card bg-white/5 border border-white/10 px-5 py-5 text-sm text-white/70">
-        No calendar configured.
-      </section>
+      <Card>
+        <p className="text-sm opacity-70">
+          No calendar configured. Add your calendar link from the settings (gear icon).
+        </p>
+      </Card>
     );
   }
 
-  if (state.status === "loading") {
-    return <div className="rounded-card bg-white/5 border border-white/10 h-[150px] animate-pulse" />;
-  }
-
-  if (state.status === "empty") {
+  if (data.events.length === 0) {
     return (
-      <section className="rounded-card bg-white/5 border border-white/10 px-5 py-5">
-        <div className="text-[15px] font-semibold">Next 48 hours</div>
-        <div className="text-[12px] text-white/60 mt-1">No events scheduled.</div>
-      </section>
+      <Card>
+        <div className="flex items-baseline justify-between mb-1">
+          <p className="font-semibold">Calendar</p>
+          <p className="text-[10px] uppercase tracking-wider opacity-50">
+            {data.source === "user" ? "Your calendar" : "Default"}
+          </p>
+        </div>
+        <p className="text-sm opacity-70">Nothing in the next 48 hours.</p>
+      </Card>
     );
   }
 
-  if (state.status === "error") {
-    return (
-      <section className="rounded-card bg-white/5 border border-white/10 px-5 py-5 text-sm text-white/70">
-        Calendar unavailable. {state.message}
-      </section>
-    );
-  }
-
-  const first = state.events[0];
-  const rest = state.events.slice(1);
   return (
-    <section className="rounded-card bg-white/5 border border-white/10 px-5 py-5 animate-fade-up">
-      <div className="flex items-start justify-between">
-        <div>
-          <div className="text-[15px] font-semibold">Next 48 hours</div>
-          <div className="text-[12px] text-white/60">
-            {state.events.length} event{state.events.length === 1 ? "" : "s"}
-          </div>
-        </div>
+    <Card>
+      <div className="flex items-baseline justify-between mb-2">
+        <p className="font-semibold">Calendar</p>
+        <p className="text-[10px] uppercase tracking-wider opacity-50">
+          Next 48h · {data.source === "user" ? "Your calendar" : "Default"}
+        </p>
       </div>
-
-      {first && (
-        <div className="mt-4">
-          <div className="text-[14px] font-medium">{first.title}</div>
-          <div className="text-[12px] text-white/60 mt-0.5">
-            {formatTimeRange(first.start, first.end)}
-          </div>
+      {data.events.map((e, i) => (
+        <div
+          key={`${e.start}-${i}`}
+          className="text-sm py-2 border-t border-white/10 first:border-t-0 first:pt-0"
+        >
+          <p className="font-medium truncate">{e.title}</p>
+          <p className="opacity-60 text-xs">
+            {new Date(e.start).toLocaleString(undefined, {
+              weekday: "short",
+              hour: "numeric",
+              minute: "2-digit",
+            })}
+          </p>
         </div>
-      )}
-
-      {rest.length > 0 && (
-        <ul className="mt-3 space-y-2 border-t border-white/10 pt-3">
-          {rest.map((ev, i) => (
-            <li key={`${ev.start}-${i}`} className="flex items-center justify-between text-[13px]">
-              <span className="truncate pr-3">{ev.title}</span>
-              <span className="shrink-0 text-white/55 text-[12px]">
-                {formatTimeRange(ev.start, ev.end)}
-              </span>
-            </li>
-          ))}
-        </ul>
-      )}
-    </section>
+      ))}
+    </Card>
   );
 }
 
-function formatTimeRange(startIso: string, endIso: string): string {
-  const start = new Date(startIso);
-  const end = new Date(endIso);
-  const fmt = (x: Date) =>
-    x.toLocaleTimeString(undefined, { hour: "numeric", minute: "2-digit" });
-  return `${fmt(start)} – ${fmt(end)}`;
+function Card({ children }: { children: React.ReactNode }) {
+  return (
+    <section className="rounded-card bg-white/5 border border-white/10 p-5">
+      {children}
+    </section>
+  );
 }
