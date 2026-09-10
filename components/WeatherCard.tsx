@@ -12,10 +12,8 @@ type Weather = {
 };
 
 export function WeatherCard() {
-  const { location, setManualCity } = useLocation();
+  const { location } = useLocation();
   const [weather, setWeather] = useState<Weather | null>(null);
-  const [cityInput, setCityInput] = useState("");
-  const [cityError, setCityError] = useState<string | null>(null);
 
   useEffect(() => {
     if (location.status !== "ready") return;
@@ -24,11 +22,8 @@ export function WeatherCard() {
       .then((r) => r.json() as Promise<Weather | { error: string }>)
       .then((data) => {
         if (cancelled) return;
-        if ("error" in data) {
-          setWeather(null);
-        } else {
-          setWeather(data);
-        }
+        if ("error" in data) setWeather(null);
+        else setWeather(data);
       })
       .catch(() => {
         if (!cancelled) setWeather(null);
@@ -45,35 +40,14 @@ export function WeatherCard() {
   if (location.status === "denied" || location.status === "unavailable") {
     return (
       <Card>
-        <p className="text-sm text-white/70 mb-3">
+        <p className="text-sm text-white/80 mb-1">
           {location.status === "denied"
             ? "Location permission denied."
-            : "Weather unavailable. Location not set."}
+            : "Weather unavailable."}
         </p>
-        <form
-          onSubmit={async (e) => {
-            e.preventDefault();
-            setCityError(null);
-            if (!cityInput.trim()) return;
-            const ok = await setManualCity(cityInput.trim());
-            if (!ok) setCityError("Couldn't find that city — try a different spelling.");
-          }}
-          className="flex gap-2"
-        >
-          <input
-            value={cityInput}
-            onChange={(e) => setCityInput(e.target.value)}
-            placeholder="Enter your city"
-            className="flex-1 rounded-xl bg-white/10 px-3 py-2 text-sm outline-none placeholder:text-white/40"
-          />
-          <button
-            type="submit"
-            className="rounded-xl bg-white/20 hover:bg-white/30 px-3 py-2 text-sm font-medium"
-          >
-            Set
-          </button>
-        </form>
-        {cityError && <p className="mt-2 text-xs text-white/70">{cityError}</p>}
+        <p className="text-xs text-white/60">
+          Open <span className="font-medium text-white/80">Settings</span> (gear icon) to set your city.
+        </p>
       </Card>
     );
   }
