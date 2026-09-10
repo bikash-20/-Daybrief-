@@ -1,6 +1,13 @@
 # Daybrief
 
-Daybrief is a personal morning dashboard that brings the day's essentials into one fast, installable PWA: greeting, local weather, calendar events, alarms, headlines, and an AI assistant.
+
+Daybrief is a personal morning dashboard that brings the day's essentials into one fast, installable PWA: greeting, local weather, calendar events, alarms, headlines, and an AI assistant. live link: https://daybrief-git-main-bikash-20s-projects.vercel.app/
+<img width="1280" height="800" alt="image" src="https://github.com/user-attachments/assets/6fc0fca7-7d08-4294-b496-c4751cd94949" />
+<img width="1280" height="800" alt="image" src="https://github.com/user-attachments/assets/6eb58f0d-5b8b-4552-85da-adbf0fc8f002" />
+<img width="1280" height="800" alt="image" src="https://github.com/user-attachments/assets/d6407fa7-5c47-4654-aadb-bb65de410bce" />
+
+
+
 
 It is designed for mobile first use, works without an account, and stores user preferences in the browser. There is no application database.
 
