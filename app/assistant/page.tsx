@@ -8,16 +8,17 @@ import { ChatMessage, type ChatBubble } from "@/components/assistant/ChatMessage
 import { StarterChips } from "@/components/assistant/StarterChips";
 import { loadAssistantContext, type DaybriefContext } from "@/lib/assistant/context";
 import { useVisualViewport } from "@/lib/useVisualViewport";
+import { STORAGE_KEYS } from "@/lib/storageKeys";
 
-const HISTORY_KEY = "daybrief:assistant-history";
-const MAX_HISTORY_MESSAGES = 30;
+const HISTORY_KEY = STORAGE_KEYS.assistantHistory;
+const MAX_HISTORY_MESSAGES = 60;
 
 type PersistedMsg = { id: string; role: ChatBubble["role"]; content: string; modelUsed?: string; tier?: number };
 
 function loadHistory(): ChatBubble[] {
   if (typeof window === "undefined") return [];
   try {
-    const raw = sessionStorage.getItem(HISTORY_KEY);
+    const raw = localStorage.getItem(HISTORY_KEY);
     if (!raw) return [];
     const parsed = JSON.parse(raw) as PersistedMsg[];
     return parsed.slice(-MAX_HISTORY_MESSAGES);
@@ -32,10 +33,24 @@ function saveHistory(messages: ChatBubble[]) {
     const slim: PersistedMsg[] = messages
       .slice(-MAX_HISTORY_MESSAGES)
       .map((m) => ({ id: m.id, role: m.role, content: m.content, modelUsed: m.modelUsed, tier: m.tier }));
-    sessionStorage.setItem(HISTORY_KEY, JSON.stringify(slim));
+    localStorage.setItem(HISTORY_KEY, JSON.stringify(slim));
   } catch {
-    /* quota — drop silently */
+    /* quota exceeded — trim to half and retry */
+    try {
+      const half = messages.slice(-Math.floor(MAX_HISTORY_MESSAGES / 2));
+      const slim: PersistedMsg[] = half.map((m) => ({
+        id: m.id, role: m.role, content: m.content, modelUsed: m.modelUsed, tier: m.tier,
+      }));
+      localStorage.setItem(HISTORY_KEY, JSON.stringify(slim));
+    } catch {
+      /* give up silently */
+    }
   }
+}
+
+function clearHistory() {
+  if (typeof window === "undefined") return;
+  localStorage.removeItem(HISTORY_KEY);
 }
 
 function newId(): string {
@@ -64,6 +79,11 @@ export default function AssistantPage() {
   useEffect(() => {
     if (hydrated) saveHistory(messages);
   }, [messages, hydrated]);
+
+  const handleClear = useCallback(() => {
+    setMessages([]);
+    clearHistory();
+  }, []);
 
   // Track the input bar's measured height so the scroll region can pad to it.
   // ResizeObserver keeps us honest when the textarea grows multi-line.
@@ -156,6 +176,17 @@ export default function AssistantPage() {
     >
       <div className="shrink-0">
         <AssistantHeader />
+        {messages.length > 0 && !sending && (
+          <div className="flex justify-end pb-1">
+            <button
+              onClick={handleClear}
+              className="text-[13px] text-ink-faint hover:text-ink underline underline-offset-2 transition-colors"
+              aria-label="Clear chat history"
+            >
+              Clear history
+            </button>
+          </div>
+        )}
       </div>
 
       <div

@@ -12,6 +12,7 @@ export const STORAGE_KEYS = {
   manualLocation: "daybrief:manual-location",
   theme: "daybrief:theme",
   alarms: "daybrief:alarms",
+  assistantHistory: "daybrief:assistant-history",
 } as const;
 
 export type StorageKey = (typeof STORAGE_KEYS)[keyof typeof STORAGE_KEYS];
